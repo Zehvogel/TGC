@@ -1,0 +1,116 @@
+{
+  "samples": {
+    "4f_sw_sl_eLpL_signal": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sw_sl_signal_4f_sw_sl_eLpL_signal.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 190.53144,
+        "n_events": 114000,
+        "e_pol": -1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sw_sl_eLpL": {
+      "trees": [
+        ""
+      ],
+      "files": [
+        ""
+      ],
+      "metadata": {
+        "xsec_fb": 190.53144,
+        "n_events": 114000,
+        "e_pol": -1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sw_sl_eLpR_signal": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sw_sl_signal_4f_sw_sl_eLpR_signal.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 10264.016,
+        "n_events": 1035000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eLpR": {
+      "trees": [
+        ""
+      ],
+      "files": [
+        ""
+      ],
+      "metadata": {
+        "xsec_fb": 10264.016,
+        "n_events": 1035000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eRpR_signal": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sw_sl_signal_4f_sw_sl_eRpR_signal.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 190.63749,
+        "n_events": 132800,
+        "e_pol": 1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eRpR": {
+      "trees": [
+        ""
+      ],
+      "files": [
+        ""
+      ],
+      "metadata": {
+        "xsec_fb": 190.63749,
+        "n_events": 132800,
+        "e_pol": 1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eRpL_signal": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sw_sl_signal_4f_sw_sl_eRpL_signal.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 86.696149,
+        "n_events": 347600,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sw_sl_eRpL": {
+      "trees": [
+        ""
+      ],
+      "files": [
+        ""
+      ],
+      "metadata": {
+        "xsec_fb": 86.696149,
+        "n_events": 347600,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    }
+  }
+}

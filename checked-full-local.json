@@ -1,0 +1,1796 @@
+{
+  "samples": {
+    "4f_sw_sl_eLpL_signal": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sw_sl_signal_4f_sw_sl_eLpL_signal.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 190.53144,
+        "n_events": 114000,
+        "e_pol": -1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sw_sl_eLpL": {
+      "trees": [
+        ""
+      ],
+      "files": [
+        ""
+      ],
+      "metadata": {
+        "xsec_fb": 190.53144,
+        "n_events": 114000,
+        "e_pol": -1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sw_sl_eLpR_signal": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sw_sl_signal_4f_sw_sl_eLpR_signal.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 10264.016,
+        "n_events": 1035000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eLpR": {
+      "trees": [
+        ""
+      ],
+      "files": [
+        ""
+      ],
+      "metadata": {
+        "xsec_fb": 10264.016,
+        "n_events": 1035000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eRpR_signal": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sw_sl_signal_4f_sw_sl_eRpR_signal.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 190.63749,
+        "n_events": 132800,
+        "e_pol": 1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eRpR": {
+      "trees": [
+        ""
+      ],
+      "files": [
+        ""
+      ],
+      "metadata": {
+        "xsec_fb": 190.63749,
+        "n_events": 132800,
+        "e_pol": 1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eRpL_signal": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sw_sl_signal_4f_sw_sl_eRpL_signal.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 86.696149,
+        "n_events": 347600,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sw_sl_eRpL": {
+      "trees": [
+        ""
+      ],
+      "files": [
+        ""
+      ],
+      "metadata": {
+        "xsec_fb": 86.696149,
+        "n_events": 347600,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_zz_sl_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_zz_sl_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 838.07949,
+        "n_events": 2099200,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_zz_sl_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_zz_sl_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 466.81644,
+        "n_events": 1054800,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_zznu_sl_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_zznu_sl_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 609.87886,
+        "n_events": 200000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_zznu_sl_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_zznu_sl_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 261.5672,
+        "n_events": 140000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sze_sl_eLpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_sze_sl_eLpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1155.8334,
+        "n_events": 172800,
+        "e_pol": -1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sze_sl_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_sze_sl_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1423.3098,
+        "n_events": 1527200,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sze_sl_eRpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_sze_sl_eRpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1157.2006,
+        "n_events": 172800,
+        "e_pol": 1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sze_sl_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_sze_sl_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1219.3967,
+        "n_events": 319600,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sznu_sl_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_sznu_sl_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 453.86976,
+        "n_events": 166400,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sznu_sl_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_sznu_sl_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 131.21958,
+        "n_events": 70000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_ww_sl_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_ww_sl_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 18779.145,
+        "n_events": 117600,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_ww_sl_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_ww_sl_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 173.46829,
+        "n_events": 122400,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sw_sl_eLpL_bkg": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_sw_sl_eLpL_bkg.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 190.53144,
+        "n_events": 114000,
+        "e_pol": -1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sw_sl_eLpR_bkg": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_sw_sl_eLpR_bkg.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 10264.016,
+        "n_events": 1035000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eRpR_bkg": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_sw_sl_eRpR_bkg.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 190.63749,
+        "n_events": 132800,
+        "e_pol": 1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eRpL_bkg": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_sl_bkg_4f_sw_sl_eRpL_bkg.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 86.696149,
+        "n_events": 347600,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_zz_h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_zz_h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1405.06,
+        "n_events": 1820600,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_zz_h_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_zz_h_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 606.70978,
+        "n_events": 723400,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_zz_l_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_zz_l_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 88.95738,
+        "n_events": 394000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_zz_l_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_zz_l_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 61.417003,
+        "n_events": 359000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_zzorww_h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_zzorww_h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 12389.292,
+        "n_events": 100000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_zzorww_l_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_zzorww_l_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1637.0568,
+        "n_events": 98000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_zzorww_l_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_zzorww_l_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 55.422478,
+        "n_events": 129000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_zznu_l_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_zznu_l_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 73.39921,
+        "n_events": 200000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_zznu_l_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_zznu_l_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 40.650116,
+        "n_events": 200000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sznu_l_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_sznu_l_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 195.12634,
+        "n_events": 1000000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sznu_l_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_sznu_l_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 40.682972,
+        "n_events": 171000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sze_l_eLpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_sze_l_eLpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 5619.0014,
+        "n_events": 300000,
+        "e_pol": -1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sze_l_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_sze_l_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 5774.7395,
+        "n_events": 455400,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sze_l_eRpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_sze_l_eRpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 5629.24,
+        "n_events": 300000,
+        "e_pol": 1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sze_l_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_sze_l_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 5675.3899,
+        "n_events": 244400,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_szeorsw_l_eLpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_szeorsw_l_eLpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 47.910667,
+        "n_events": 50000,
+        "e_pol": -1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_szeorsw_l_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_szeorsw_l_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 984.31247,
+        "n_events": 499800,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_szeorsw_l_eRpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_szeorsw_l_eRpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 47.907685,
+        "n_events": 50000,
+        "e_pol": 1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_szeorsw_l_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_szeorsw_l_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 29.219409,
+        "n_events": 150000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sw_l_eLpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_sw_l_eLpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 63.521046,
+        "n_events": 28200,
+        "e_pol": -1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sw_l_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_sw_l_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 3421.9693,
+        "n_events": 291200,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_l_eRpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_sw_l_eRpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 63.483169,
+        "n_events": 39000,
+        "e_pol": 1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_l_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_sw_l_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 29.488335,
+        "n_events": 42600,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_ww_h_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_ww_h_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 136.82153,
+        "n_events": 59800,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_ww_l_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/4f_not_sl_4f_ww_l_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1563.418,
+        "n_events": 157000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "aa_2f_z_l_eWpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/aa2f_aa_2f_z_l_eWpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1475838.2,
+        "n_events": 432000,
+        "e_pol": 0.0,
+        "p_pol": 0.0
+      }
+    },
+    "2f_z_eehiq_eLpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/2f_2f_z_eehiq_eLpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 199218.27,
+        "n_events": 302400,
+        "e_pol": -1.0,
+        "p_pol": -1.0
+      }
+    },
+    "2f_z_eehiq_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/2f_2f_z_eehiq_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 193112.24,
+        "n_events": 378000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "2f_z_eehiq_eRpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/2f_2f_z_eehiq_eRpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 199218.27,
+        "n_events": 259200,
+        "e_pol": 1.0,
+        "p_pol": 1.0
+      }
+    },
+    "2f_z_eehiq_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/2f_2f_z_eehiq_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 190517.37,
+        "n_events": 302400,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "2f_z_h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/2f_2f_z_h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 127965.53,
+        "n_events": 243200,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "2f_z_h_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/2f_2f_z_h_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 70416.743,
+        "n_events": 116800,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "2f_z_l_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/2f_2f_z_l_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 21214.001,
+        "n_events": 392000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "2f_z_l_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/2f_2f_z_l_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 16363.043,
+        "n_events": 311000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "ea_3f_z_l_eLpB": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ea_3f_z_l_eLpB.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 51367.7005,
+        "n_events": 132000,
+        "e_pol": -1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_3f_z_l_eRpB": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ea_3f_z_l_eRpB.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 51302.6587,
+        "n_events": 184000,
+        "e_pol": 1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_3f_z_nu_eLpB": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ea_3f_z_nu_eLpB.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 19.9942092,
+        "n_events": 40000,
+        "e_pol": -1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_3f_z_nu_eRpB": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ea_3f_z_nu_eRpB.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 11.05424,
+        "n_events": 30000,
+        "e_pol": 1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_3f_z_h_eLpB": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ea_3f_z_h_eLpB.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 4583.7671,
+        "n_events": 98400,
+        "e_pol": -1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_3f_z_h_eRpB": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ea_3f_z_h_eRpB.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 4549.66653,
+        "n_events": 119000,
+        "e_pol": 1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_3f_w_h_eLpB": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ea_3f_w_h_eLpB.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 29.0274433,
+        "n_events": 26800,
+        "e_pol": -1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ae_3f_z_l_eBpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ae_3f_z_l_eBpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 51488.5509,
+        "n_events": 132000,
+        "e_pol": 0.0,
+        "p_pol": -1.0
+      }
+    },
+    "ae_3f_z_l_eBpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ae_3f_z_l_eBpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 51557.8638,
+        "n_events": 318000,
+        "e_pol": 0.0,
+        "p_pol": 1.0
+      }
+    },
+    "ae_3f_z_nu_eBpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ae_3f_z_nu_eBpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 11.4134364,
+        "n_events": 30000,
+        "e_pol": 0.0,
+        "p_pol": -1.0
+      }
+    },
+    "ae_3f_z_nu_eBpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ae_3f_z_nu_eBpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 20.4332362,
+        "n_events": 40000,
+        "e_pol": 0.0,
+        "p_pol": 1.0
+      }
+    },
+    "ae_3f_z_h_eBpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ae_3f_z_h_eBpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 4572.19586,
+        "n_events": 93600,
+        "e_pol": 0.0,
+        "p_pol": -1.0
+      }
+    },
+    "ae_3f_z_h_eBpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ae_3f_z_h_eBpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 4604.45078,
+        "n_events": 88200,
+        "e_pol": 0.0,
+        "p_pol": 1.0
+      }
+    },
+    "ae_3f_w_h_eBpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/3f_ae_3f_w_h_eBpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 29.5513295,
+        "n_events": 19600,
+        "e_pol": 0.0,
+        "p_pol": 1.0
+      }
+    },
+    "ea_5f_zz_sl_eLpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ea_5f_zz_sl_eLpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 4.519288,
+        "n_events": 3000,
+        "e_pol": -1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_5f_zz_sl_eRpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ea_5f_zz_sl_eRpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 4.4656986,
+        "n_events": 3600,
+        "e_pol": 1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_5f_zznu_sl_eLpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ea_5f_zznu_sl_eLpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.046157304,
+        "n_events": 600,
+        "e_pol": -1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_5f_zznu_sl_eRpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ea_5f_zznu_sl_eRpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.02437996,
+        "n_events": 600,
+        "e_pol": 1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_5f_ww_sl_eLpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ea_5f_ww_sl_eLpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 2.1966446,
+        "n_events": 800,
+        "e_pol": -1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_5f_ww_sl_eRpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ea_5f_ww_sl_eRpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1.434776,
+        "n_events": 800,
+        "e_pol": 1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_5f_zz_l_eRpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ea_5f_zz_l_eRpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 13.856513,
+        "n_events": 6000,
+        "e_pol": 1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_5f_zznu_l_eLpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ea_5f_zznu_l_eLpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.036995748,
+        "n_events": 1000,
+        "e_pol": -1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_5f_ww_l_eLpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ea_5f_ww_l_eLpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.30532742,
+        "n_events": 1500,
+        "e_pol": -1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_5f_ww_l_eRpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ea_5f_ww_l_eRpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.19251677,
+        "n_events": 1000,
+        "e_pol": 1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_5f_zzorww_l_eLpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ea_5f_zzorww_l_eLpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.19409879,
+        "n_events": 1000,
+        "e_pol": -1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ea_5f_zzorww_l_eRpW": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ea_5f_zzorww_l_eRpW.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.12667552,
+        "n_events": 1000,
+        "e_pol": 1.0,
+        "p_pol": 0.0
+      }
+    },
+    "ae_5f_zz_sl_eWpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_zz_sl_eWpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 4.4987202,
+        "n_events": 3000,
+        "e_pol": 0.0,
+        "p_pol": -1.0
+      }
+    },
+    "ae_5f_zz_sl_eWpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_zz_sl_eWpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 4.530851,
+        "n_events": 3000,
+        "e_pol": 0.0,
+        "p_pol": 1.0
+      }
+    },
+    "ae_5f_zznu_sl_eWpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_zznu_sl_eWpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.024168602,
+        "n_events": 600,
+        "e_pol": 0.0,
+        "p_pol": -1.0
+      }
+    },
+    "ae_5f_zznu_sl_eWpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_zznu_sl_eWpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.046408183,
+        "n_events": 600,
+        "e_pol": 0.0,
+        "p_pol": 1.0
+      }
+    },
+    "ae_5f_ww_sl_eWpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_ww_sl_eWpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1.6885251,
+        "n_events": 800,
+        "e_pol": 0.0,
+        "p_pol": -1.0
+      }
+    },
+    "ae_5f_ww_sl_eWpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_ww_sl_eWpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 12.483807,
+        "n_events": 6400,
+        "e_pol": 0.0,
+        "p_pol": 1.0
+      }
+    },
+    "ae_5f_zz_l_eWpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_zz_l_eWpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 13.813397,
+        "n_events": 8000,
+        "e_pol": 0.0,
+        "p_pol": -1.0
+      }
+    },
+    "ae_5f_zz_l_eWpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_zz_l_eWpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 13.905538,
+        "n_events": 7500,
+        "e_pol": 0.0,
+        "p_pol": 1.0
+      }
+    },
+    "ae_5f_zznu_l_eWpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_zznu_l_eWpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.023223178,
+        "n_events": 1000,
+        "e_pol": 0.0,
+        "p_pol": -1.0
+      }
+    },
+    "ae_5f_ww_l_eWpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_ww_l_eWpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.27434579,
+        "n_events": 1500,
+        "e_pol": 0.0,
+        "p_pol": -1.0
+      }
+    },
+    "ae_5f_ww_l_eWpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_ww_l_eWpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 3.842944,
+        "n_events": 1500,
+        "e_pol": 0.0,
+        "p_pol": 1.0
+      }
+    },
+    "ae_5f_zzorww_l_eWpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_zzorww_l_eWpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.12646637,
+        "n_events": 1000,
+        "e_pol": 0.0,
+        "p_pol": -1.0
+      }
+    },
+    "ae_5f_zzorww_l_eWpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/5f_ae_5f_zzorww_l_eWpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.1922166,
+        "n_events": 1000,
+        "e_pol": 0.0,
+        "p_pol": 1.0
+      }
+    },
+    "6f_llxyyx_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_llxyyx_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1.1851486,
+        "n_events": 18000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "6f_llxyyx_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_llxyyx_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.049094714,
+        "n_events": 18000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "6f_eexyyx_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_eexyyx_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.71215521,
+        "n_events": 18000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "6f_eexyyx_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_eexyyx_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.11921385,
+        "n_events": 18000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "6f_vvxyyx_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_vvxyyx_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.076579776,
+        "n_events": 18000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "6f_vvxyyx_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_vvxyyx_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.016396728,
+        "n_events": 18000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "6f_llxxxx_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_llxxxx_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.026534329,
+        "n_events": 18000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "6f_llxxxx_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_llxxxx_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.014122162,
+        "n_events": 18000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "6f_eexxxx_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_eexxxx_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.01353109,
+        "n_events": 18000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "6f_vvxxxx_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_vvxxxx_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.01894877,
+        "n_events": 18000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "6f_vvxxxx_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_vvxxxx_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.0086307847,
+        "n_events": 9200,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "6f_llyyyy_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_llyyyy_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.03633422,
+        "n_events": 9200,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "6f_llyyyy_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_llyyyy_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.017441425,
+        "n_events": 8800,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "6f_eeyyyy_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_eeyyyy_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.015709496,
+        "n_events": 18000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "6f_eeyyyy_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_eeyyyy_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.007719284,
+        "n_events": 8800,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "6f_vvyyyy_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_vvyyyy_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.011789115,
+        "n_events": 9200,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "6f_vvyyyy_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/6f_6f_vvyyyy_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.0049972942,
+        "n_events": 9200,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "e1e1h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_e1e1h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 17.671491,
+        "n_events": 490800,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "e1e1h_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_e1e1h_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 11.138876,
+        "n_events": 490867,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "e2e2h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_e2e2h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 16.970655,
+        "n_events": 500000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "e2e2h_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_e2e2h_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 10.869108,
+        "n_events": 500000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "e3e3h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_e3e3h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 16.940726,
+        "n_events": 500000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "e3e3h_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_e3e3h_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 10.843428,
+        "n_events": 500000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "n1n1h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_n1n1h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 60.350892,
+        "n_events": 499600,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "n1n1h_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_n1n1h_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 21.464205,
+        "n_events": 489200,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "n23n23h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_n23n23h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 67.110727,
+        "n_events": 491600,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "n23n23h_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_n23n23h_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 42.927876,
+        "n_events": 500000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "qqh_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_qqh_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 343.03023,
+        "n_events": 494000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "qqh_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_qqh_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 219.48615,
+        "n_events": 494000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "e1e1h_eLpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_e1e1h_eLpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.62348544,
+        "n_events": 490800,
+        "e_pol": -1.0,
+        "p_pol": -1.0
+      }
+    },
+    "e1e1h_eRpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "data/snapshots/full/higgs_e1e1h_eRpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.62348544,
+        "n_events": 498800,
+        "e_pol": 1.0,
+        "p_pol": 1.0
+      }
+    }
+  }
+}

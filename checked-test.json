@@ -1,0 +1,382 @@
+{
+  "samples": {
+    "4f_sw_sl_eLpR_signal": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/4f_sw_sl_signal_4f_sw_sl_eLpR_signal.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 10264.016,
+        "n_events": 84800,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eLpR": {
+      "trees": [
+        ""
+      ],
+      "files": [
+        ""
+      ],
+      "metadata": {
+        "xsec_fb": 10264.016,
+        "n_events": 84800,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eRpL_signal": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/4f_sw_sl_signal_4f_sw_sl_eRpL_signal.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 86.696149,
+        "n_events": 10200,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sw_sl_eRpL": {
+      "trees": [
+        ""
+      ],
+      "files": [
+        ""
+      ],
+      "metadata": {
+        "xsec_fb": 86.696149,
+        "n_events": 10200,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_zz_sl_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/4f_sl_bkg_4f_zz_sl_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 838.07949,
+        "n_events": 46800,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sze_sl_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/4f_sl_bkg_4f_sze_sl_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1219.3967,
+        "n_events": 37600,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "4f_sze_sl_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/4f_sl_bkg_4f_sze_sl_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1423.3098,
+        "n_events": 55200,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sznu_sl_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/4f_sl_bkg_4f_sznu_sl_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 453.86976,
+        "n_events": 15200,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_sl_eLpR_bkg": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/4f_sl_bkg_4f_sw_sl_eLpR_bkg.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 10264.016,
+        "n_events": 84800,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sw_l_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/4f_not_sl_4f_sw_l_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 3421.9693,
+        "n_events": 97200,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_zz_h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/4f_not_sl_4f_zz_h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1405.06,
+        "n_events": 47000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_zz_l_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/4f_not_sl_4f_zz_l_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 88.95738,
+        "n_events": 41000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "4f_sznu_l_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/4f_not_sl_4f_sznu_l_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 195.12634,
+        "n_events": 34000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "2f_z_h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/2f_2f_z_h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 127965.53,
+        "n_events": 15200,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "ae_3f_z_l_eBpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/3f_ae_3f_z_l_eBpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 51488.5509,
+        "n_events": 46000,
+        "e_pol": 0.0,
+        "p_pol": -1.0
+      }
+    },
+    "6f_llxyyx_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/6f_6f_llxyyx_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 1.1851486,
+        "n_events": 9200,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "6f_vvyyyy_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/6f_6f_vvyyyy_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.0049972942,
+        "n_events": 9200,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "6f_llyyyy_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/6f_6f_llyyyy_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.017441425,
+        "n_events": 8800,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "e1e1h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/higgs_e1e1h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 17.671491,
+        "n_events": 17600,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "n1n1h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/higgs_n1n1h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 60.350892,
+        "n_events": 18200,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "qqh_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/higgs_qqh_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 343.03023,
+        "n_events": 6000,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "e2e2h_eLpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/higgs_e2e2h_eLpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 16.970655,
+        "n_events": 36600,
+        "e_pol": -1.0,
+        "p_pol": 1.0
+      }
+    },
+    "qqh_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/higgs_qqh_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 219.48615,
+        "n_events": 6000,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "n1n1h_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/higgs_n1n1h_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 21.464205,
+        "n_events": 9800,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "e1e1h_eRpR": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/higgs_e1e1h_eRpR.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.62348544,
+        "n_events": 9200,
+        "e_pol": 1.0,
+        "p_pol": 1.0
+      }
+    },
+    "n23n23h_eRpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/higgs_n23n23h_eRpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 42.927876,
+        "n_events": 9800,
+        "e_pol": 1.0,
+        "p_pol": -1.0
+      }
+    },
+    "e1e1h_eLpL": {
+      "trees": [
+        "events"
+      ],
+      "files": [
+        "root://eosproject.cern.ch//eos/experiment/clicdp/data/user/l/lreichen/snapshots/test/higgs_e1e1h_eLpL.snapshot.root"
+      ],
+      "metadata": {
+        "xsec_fb": 0.62348544,
+        "n_events": 9200,
+        "e_pol": -1.0,
+        "p_pol": -1.0
+      }
+    }
+  }
+}

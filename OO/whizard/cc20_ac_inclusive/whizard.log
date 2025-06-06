@@ -1,0 +1,77 @@
+|=============================================================================|
+|                                                                             |
+|    WW             WW  WW   WW  WW  WWWWWW      WW      WWWWW    WWWW        |
+|     WW    WW     WW   WW   WW  WW     WW      WWWW     WW  WW   WW  WW      |
+|      WW  WW WW  WW    WWWWWWW  WW    WW      WW  WW    WWWWW    WW   WW     |
+|       WWWW   WWWW     WW   WW  WW   WW      WWWWWWWW   WW  WW   WW  WW      |
+|        WW     WW      WW   WW  WW  WWWWWW  WW      WW  WW   WW  WWWW        |
+|                                                                             |
+|                                                                             |
+|                                        W                                    |
+|                                       sW                                    |
+|                                       WW                                    |
+|                                      sWW                                    |
+|                                      WWW                                    |
+|                                     wWWW                                    |
+|                                    wWWWW                                    |
+|                                    WW WW                                    |
+|                                    WW WW                                    |
+|                                   wWW WW                                    |
+|                                  wWW  WW                                    |
+|                                  WW   WW                                    |
+|                                  WW   WW                                    |
+|                                 WW    WW                                    |
+|                                 WW    WW                                    |
+|                                WW     WW                                    |
+|                                WW     WW                                    |
+|           wwwwww              WW      WW                                    |
+|              WWWWWww          WW      WW                                    |
+|                 WWWWWwwwww   WW       WW                                    |
+|                     wWWWwwwwwWW       WW                                    |
+|                 wWWWWWWWWWWwWWW       WW                                    |
+|                wWWWWW       wW        WWWWWWW                               |
+|                  WWWW       wW        WW  wWWWWWWWwww                       |
+|                   WWWW                      wWWWWWWWwwww                    |
+|                     WWWW                      WWWW     WWw                  |
+|                       WWWWww                   WWWW                         |
+|                           WWWwwww              WWWW                         |
+|                               wWWWWwww       wWWWWW                         |
+|                                     WwwwwwwwwWWW                            |
+|                                                                             |
+|                                                                             |
+|                                                                             |
+|  by:   Wolfgang Kilian, Thorsten Ohl, Juergen Reuter                        |
+|        with contributions from Christian Speckner                           |
+|        Contact: <whizard@desy.de>                                           |
+|                                                                             |
+|  if you use WHIZARD please cite:                                            |
+|        W. Kilian, T. Ohl, J. Reuter,  Eur.Phys.J.C71 (2011) 1742            |
+|                                          [arXiv: 0708.4233 [hep-ph]]        |
+|        M. Moretti, T. Ohl, J. Reuter, arXiv: hep-ph/0102195                 |
+|                                                                             |
+|=============================================================================|
+|                               WHIZARD 3.1.4
+|=============================================================================|
+| Reading model file '/cvmfs/sw.hsf.org/key4hep/releases/2025-05-29/x86_64-almalinux9-gcc14.2.0-opt/whizard/3.1.4-zjmc7r/share/whizard/models/SM.mdl'
+| Preloaded model: SM
+| Process library 'default_lib': initialized
+| Preloaded library: default_lib
+| Reading model file '/cvmfs/sw.hsf.org/key4hep/releases/2025-05-29/x86_64-almalinux9-gcc14.2.0-opt/whizard/3.1.4-zjmc7r/share/whizard/models/SM_hadrons.mdl'
+| Reading commands from file 'sw-sl.sin'
+| Reading model file '/cvmfs/sw.hsf.org/key4hep/releases/2025-05-29/x86_64-almalinux9-gcc14.2.0-opt/whizard/3.1.4-zjmc7r/share/whizard/models/SM_ac.mdl'
+| Switching to model 'SM_ac'
+[user variable] u_q = PDG(2, -2)
+[user variable] d_q = PDG(1, -1)
+[user variable] lep = PDG(11, -11)
+[user variable] nu = PDG(12, -12)
+| Process library 'default_lib': recorded process 'ww'
+| Process library 'default_lib': compiling ...
+| Process library 'default_lib': writing makefile
+| Process library 'default_lib': writing driver
+| Process library 'default_lib': creating source code
+| Process library 'default_lib': compiling sources
+| Process library 'default_lib': linking
+| Process library 'default_lib': loading
+| Process library 'default_lib': ... success.
+| WHIZARD run finished.
+|=============================================================================|
