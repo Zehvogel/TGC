@@ -76,7 +76,7 @@ class Dataset():
         return dataset
 
 
-    def get_weight(self, process_name, int_lumi: float, e_pol: float = 0., p_pol: float = 0.) -> float:
+    def get_weight(self, process_name: str, int_lumi: float, e_pol: float = 0., p_pol: float = 0.) -> float:
         meta = self._dataset[process_name].metadata
         process_e_pol = meta.get("e_pol", 0.)
         process_p_pol = meta.get("p_pol", 0.)
@@ -87,7 +87,7 @@ class Dataset():
         return pol_weight * lumi_weight
 
 
-    def get_lumi_and_pol(self, process_name) -> tuple[float, float, float]:
+    def get_lumi_and_pol(self, process_name: str) -> tuple[float, float, float]:
         meta = self._dataset[process_name].metadata
         process_e_pol = meta.get("e_pol", 0.)
         process_p_pol = meta.get("p_pol", 0.)
@@ -95,6 +95,11 @@ class Dataset():
         xsec = meta["xsec_fb"]
         lumi = n_events / xsec
         return lumi, process_e_pol, process_p_pol
+
+
+    def get_category(self, process_name: str) -> str:
+        meta = self._dataset[process_name].metadata
+        return meta["category"]
 
 
     def get_samples(self) -> Generator[tuple[str, str, list[str]], None, None]:

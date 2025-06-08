@@ -18,7 +18,6 @@ class Analysis:
     # need a place to "park" them somewhere as the THStacks do not take ownership :(
     _scaled_histograms = {}
     _legends = {}
-    _xsecs = {}
     _reports = {}
     _categories: dict[str, list[str]] = {}
     _snapshots = {}
@@ -54,6 +53,16 @@ class Analysis:
         # take first df as all have the same
         cols = list(self._df.values())[0].GetColumnNames()
         return col_name in cols
+
+
+    def init_categories(self):
+        for k in self._df:
+            category_name = self._dataset.get_category(k)
+            # TODO: error handling if there is no category?
+            try:
+                self._categories[category_name].append(k)
+            except KeyError:
+                self._categories[category_name] = [k]
 
 
     def init_parameters(self, params: list[tuple[str, str, str]]):
@@ -187,10 +196,7 @@ class Analysis:
                 # get histogram, clone it, scale it, put it in a list
                 h = histograms[k].Clone()
                 # our crossection table only knows about the full processes
-                # FIXME only do this step is needed!
-                weight_key = k.removesuffix("_signal").removesuffix("_bkg")
-                # FIXME, is now a method of the Dataset
-                weight = self._dataset.get_weight(weight_key, int_lumi, e_pol, p_pol)
+                weight = self._dataset.get_weight(k, int_lumi, e_pol, p_pol)
                 h.Scale(weight)
                 scaled_cat_histograms.append(h)
             # sum up scaled category histograms, starting with the first one
@@ -374,6 +380,15 @@ class Analysis:
             if category_name.endswith("_signal"):
                 signals.append(category_name)
             categories[category_name] = dataframes
+            # now transfer metadata
+            # need to get metadata from before the signal definition cut for correct weight
+            # FIXME: add the new samples here and also the category
+            # old_frame = frame.removesuffix("_bkg").removesuffix("_signal")
+            # *_, old_meta = self._dataset.get_sample(old_frame)
+            # meta = old_meta.copy()
+            # meta["category"] = category_name
+            # new_sample = ([tree_name], [file_name], meta)
+            # dataset.add_sample(frame, *new_sample)
         # now apply cuts and clean up the backgrounds
         for signal_name in signals:
             signal_def = input[signal_name]
@@ -458,7 +473,9 @@ class Analysis:
                 # now transfer metadata
                 # need to get metadata from before the signal definition cut for correct weight
                 old_frame = frame.removesuffix("_bkg").removesuffix("_signal")
-                *_, meta = self._dataset.get_sample(old_frame)
+                *_, old_meta = self._dataset.get_sample(old_frame)
+                meta = old_meta.copy()
+                meta["category"] = category_name
                 new_sample = ([tree_name], [file_name], meta)
                 dataset.add_sample(frame, *new_sample)
         with open(meta_outname, "w") as out_file:
@@ -505,12 +522,10 @@ class Analysis:
                 # now transfer metadata
                 # need to get metadata from before the signal definition cut for correct weight
                 old_frame = frame.removesuffix("_bkg").removesuffix("_signal")
-                *_, meta = self._dataset.get_sample(old_frame)
+                *_, old_meta = self._dataset.get_sample(old_frame)
+                meta = old_meta.copy()
+                meta["category"] = category_name
                 new_sample = ([tree_name], [file_name], meta)
                 dataset.add_sample(frame, *new_sample)
-                # also add metadata for the uncut frame if needed
-                # FIXME: remove this again once this is handled correctly during categorisation!
-                if frame != old_frame:
-                    dataset.add_sample(old_frame, [""], [""], meta)
         with open(meta_outname, "w") as out_file:
             out_file.write(dataset.to_json(indent=2))
