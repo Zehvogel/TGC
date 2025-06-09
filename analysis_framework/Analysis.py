@@ -49,6 +49,17 @@ class Analysis:
                     yield df_name, df
 
 
+    def _get_frame_names(self, categories: list[str]|None):
+        if not categories:
+            for k in self._df:
+                yield k
+        else:
+            for category_name in categories:
+                category = self._categories[category_name]
+                for df_name in category:
+                    yield df_name
+
+
     def _call_on_frames(self, method_name: str, args, categories: list[str]|None = None):
         for k, df in self._get_frames(categories):
             res = getattr(df, method_name)(*args)
@@ -125,9 +136,20 @@ class Analysis:
     def book_histogram_1D(self, name: str, column: str, config: tuple, categories: list[str]|None = None):
         self._histograms[name] = self.book_some_method("Histo1D", (config, column), categories)
 
+    # TODO refactor
+    def book_weighted_histogram_1D(self, name: str, column: str, weight: str, config: tuple, categories: list[str]|None = None):
+        self._histograms[name] = self.book_some_method("Histo1D", (config, column, weight), categories)
 
     def book_histogram_2D(self, name: str, column1: str, column2: str, config: tuple, categories: list[str]|None = None):
         self._histograms[name] = self.book_some_method("Histo2D", (config, column1, column2), categories)
+
+
+    def book_variations(self, name: str, categories: list[str]|None = None):
+        res = {}
+        histograms = self._histograms[name]
+        for k in self._get_frame_names(categories):
+            res[k] = ROOT.RDF.Experimental.VariationsFor(histograms[k])
+        self._varied_histograms[name] = res
 
 
     def book_templates(self, configs: dict[str, tuple], weights: list[str], categories: list[str]|None = None):
@@ -138,8 +160,9 @@ class Analysis:
         vary_args = (nominal_name, f"ROOT::RVecD{{{','.join(other_names)}}}", short_names, "weight")
         self._vary(vary_args, categories)
         for hist_name, hist_conf in configs.items():
-            self.book_histogram_1D(hist_name, hist_name, hist_conf, categories)
-            self._varied_histograms[hist_name] = ROOT.RDF.Experimental.VariationsFor(self._histograms[hist_name])
+            name = f"tmpl_{hist_name}"
+            self.book_weighted_histogram_1D(name, hist_name, nominal_name, hist_conf, categories)
+            self.book_variations(name, categories)
 
 
     def run(self):
