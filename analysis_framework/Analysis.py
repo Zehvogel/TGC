@@ -12,6 +12,7 @@ class Analysis:
     _dataset: Dataset
     _df: dict[str, Any] = {}
     _histograms = {}
+    _varied_histograms = {}
     _sums = {}
     _stacks = {}
     _canvases = {}
@@ -36,11 +37,44 @@ class Analysis:
             self._df[name] = df
 
 
+    def _get_frames(self, categories: list[str]|None):
+        if not categories:
+            for k, df in self._df.items():
+                yield k, df
+        else:
+            for category_name in categories:
+                category = self._categories[category_name]
+                for df_name in category:
+                    df = self._df[df_name]
+                    yield df_name, df
+
+
+    def _call_on_frames(self, method_name: str, args, categories: list[str]|None = None):
+        for k, df in self._get_frames(categories):
+            res = getattr(df, method_name)(*args)
+            yield k, res
+
+
+    def _apply_to_frames(self, method_name: str, args, categories: list[str]|None = None):
+        for k, res_df in self._call_on_frames(method_name, args, categories):
+            self._df[k] = res_df
+
+
+    def _define(self, args, categories: list[str]|None = None):
+        self._apply_to_frames("Define", args, categories)
+
+
+    def _vary(self, args, categories: list[str]|None = None):
+        self._apply_to_frames("Vary", args, categories)
+
+
+    # refactor to use internal implementation above
     def Define(self, *args):
         for k, df in self._df.items():
             self._df[k] = df.Define(*args)
 
 
+    # refactor to use internal implementation above
     def define_only_on(self, categories: list[str], *args):
         for category_name in categories:
             category = self._categories[category_name]
@@ -76,22 +110,9 @@ class Analysis:
                 self.Define(par_col_name, f"Parameters.get<{p_type}>(\"{p_name}\").value_or({p_alt})")
 
 
-    def _get_frames(self, categories: list[str]|None):
-        if not categories:
-            for k, df in self._df.items():
-                yield k, df
-        else:
-            for category_name in categories:
-                category = self._categories[category_name]
-                for df_name in category:
-                    df = self._df[df_name]
-                    yield df_name, df
-
-
     def book_some_method(self, method_name: str, args, categories: list[str]|None = None):
         results = {}
-        for k, df in self._get_frames(categories):
-            res = getattr(df, method_name)(*args)
+        for k, res in self._call_on_frames(method_name, args, categories):
             results[k] = res
             self._booked_objects.append(res)
         return results
@@ -107,6 +128,18 @@ class Analysis:
 
     def book_histogram_2D(self, name: str, column1: str, column2: str, config: tuple, categories: list[str]|None = None):
         self._histograms[name] = self.book_some_method("Histo2D", (config, column1, column2), categories)
+
+
+    def book_templates(self, configs: dict[str, tuple], weights: list[str], categories: list[str]|None = None):
+        """Book template creation for the given named histogram configs and weight names. The first weight will be used as the nominal one. Expects weight names to start with 'weight_'"""
+        nominal_name = weights[0]
+        other_names = weights[1:]
+        short_names = [name.removeprefix("weight_") for name in other_names]
+        vary_args = (nominal_name, f"ROOT::RVecD{{{','.join(other_names)}}}", short_names, "weight")
+        self._vary(vary_args, categories)
+        for hist_name, hist_conf in configs.items():
+            self.book_histogram_1D(hist_name, hist_name, hist_conf, categories)
+            self._varied_histograms[hist_name] = ROOT.RDF.Experimental.VariationsFor(self._histograms[hist_name])
 
 
     def run(self):
@@ -472,7 +505,9 @@ class Analysis:
                 self._booked_objects.append(snapshot)
                 # now transfer metadata
                 # need to get metadata from before the signal definition cut for correct weight
-                old_frame = frame.removesuffix("_bkg").removesuffix("_signal")
+                # FIXME: this has to be done as a change to the dataset at category creation time instead!!! 
+                # old_frame = frame.removesuffix("_bkg").removesuffix("_signal"
+                old_frame = frame
                 *_, old_meta = self._dataset.get_sample(old_frame)
                 meta = old_meta.copy()
                 meta["category"] = category_name

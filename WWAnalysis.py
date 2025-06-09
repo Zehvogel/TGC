@@ -340,7 +340,6 @@ class WWAnalysis(Analysis):
                     """)
         for name, omw in self._omega_wrappers.items():
             self.define_only_on(self._signal_categories, f"mc_sqme_{name}", omw, ["mc_ME_momenta", "mc_ME_flv"])
-            # divide by recalculated nominal as all the ILD values are broken...
             if not name == "nominal":
-                # TODO: get sqme from whizard
+                # divide by recalculated nominal as all the ILD values are broken...
                 self.define_only_on(self._signal_categories, f"weight_{name}", f"mc_sqme_{name} / mc_sqme_nominal")
