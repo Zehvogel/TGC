@@ -17,28 +17,32 @@ class AltSetupHandler():
         self._alt_setup = self._make_alt_configs()
 
 
-    def make_name(self, parameter: str, var: float, negate: bool = False) -> str:
+    def make_name(self, parameter: str, var: float) -> str:
         # need to get rid of - to use as c++ identifier later
-        alt_name = f"{parameter}_{'pos' if not negate else 'neg'}_{var:.0e}".replace("-", "m")
+        alt_name = f"{parameter}_{'pos' if var > 0. else 'neg'}_{abs(var):.0e}".replace("-", "m")
         return alt_name
 
 
-    def _make_variation(self, parameter: str, var: float, negate: bool = False) -> tuple[str, dict[str, float]]:
-        alt_name = self.make_name(parameter, var, negate)
+    def _make_variation(self, parameter: str, var: float) -> dict[str, float]:
         alt_conf = self._sm_ref.copy()
-        alt_conf[parameter] += var if not negate else -1.*var
-        return alt_name, alt_conf
+        alt_conf[parameter] += var
+        return alt_conf
+
+
+    def _get_parameters_variations_it(self):
+        for parameter, variations in self._variations.items():
+            for var in variations:
+                yield parameter, var
+                if self._mirror:
+                    yield parameter, -var
 
 
     def _make_alt_configs(self) -> dict[str, dict[str, float]]:
         alt_configs = {}
-        for parameter, variations in self._variations.items():
-            for var in variations:
-                alt_name, alt_conf = self._make_variation(parameter, var)
-                alt_configs[alt_name] = alt_conf
-                if self._mirror:
-                    alt_name, alt_conf = self._make_variation(parameter, var, negate=True)
-                    alt_configs[alt_name] = alt_conf
+        for parameter, var in self._get_parameters_variations_it():
+            alt_name = self.make_name(parameter, var)
+            alt_conf = self._make_variation(parameter, var)
+            alt_configs[alt_name] = alt_conf
         return alt_configs
 
 
@@ -49,3 +53,9 @@ class AltSetupHandler():
 
     def get_variations(self):
         return self._variations
+
+
+    def get_named_variations_it(self):
+        for parameter, var in self._get_parameters_variations_it():
+            alt_name = self.make_name(parameter, var)
+            yield alt_name, var
