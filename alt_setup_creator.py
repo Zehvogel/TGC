@@ -55,7 +55,27 @@ class AltSetupHandler():
         return self._variations
 
 
-    def get_named_variations_it(self):
+    # TODO: refactor
+    # this one returns also the mirrored ones
+    def get_variations_ext(self):
+        if not self._mirror:
+            return self.get_variations()
+        res = {}
+        for name, vars in self._variations.items():
+            new_vars = [-1 * i for i in vars] + vars
+            res[name] = new_vars
+        return res
+
+
+
+    def get_named_variations_it(self, only=None):
         for parameter, var in self._get_parameters_variations_it():
             alt_name = self.make_name(parameter, var)
+            if only and alt_name not in only:
+                continue
             yield alt_name, var
+
+
+    def get_names_it(self):
+        for name, _ in self.get_named_variations_it():
+            yield name

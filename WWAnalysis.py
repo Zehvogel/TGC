@@ -3,6 +3,7 @@ import ROOT
 import numpy as np
 from OO.whizard.model_parser import ModelParser
 import subprocess
+from alt_setup_creator import AltSetupHandler
 
 
 def make_lvec_E(column: str, idx: str):
@@ -34,6 +35,8 @@ class WWAnalysis(Analysis):
     _omega_wrappers = {}
     _mc_indices = {}
     _signal_categories: list[str]
+    _template_graphs = {}
+    _template_funs = {}
 
     def __init__(self, dataset):
         self.truth_defined = False
@@ -90,105 +93,7 @@ class WWAnalysis(Analysis):
                 self.define_only_on(self.truth_categories, f"ub_{lvec}", f"unboost_xangle({lvec})")
 
 
-    def define_hagiwara_angles(self):
-        # now we want to calculate the angles as in the Hagiwara parametrisation
-        # XXX: there is this one decision to make, do we use both measured daughter values or just one and flip it? :(
-        # TODO: is this well defined for the e+nuqq case?
-        # I need to be a bit careful, there can be some replacements that are only valid in zero-width CC03
-        # It all depends on the systems of the measurement actually being the rest-frame of the parent i.e. that the decay are back-to-back
-        # Exactly in this condition ang(W-, e-) == ang(W+, e+) == Theta_W
-        # In the W- rest-frame f has theta and phi and fbar has -theta and phi, what are these angles actually
-        # theta ang(f*, z') with f* in a system rotated such that z' direction of W- in the CMS and y' = P_e- x P_W-
-        # boosted into the rest-frame of the parent of f
-        # for now we just act as if we are in the double pole case as in Hagiwara and proceed.
-        # TODO: guaranteed to not get 0 charge?
-        self.Define("Wm_lvec", "iso_lep_charge < 0. ? ub_leptonic_W_lvec : ub_hadronic_W_lvec")
-        self.Define("Wp_lvec", "iso_lep_charge > 0. ? ub_leptonic_W_lvec : ub_hadronic_W_lvec")
-        # they literally did not put a cheaper cosTheta accessor into Genvectors...
-        self.Define("Wm_cosTheta", "cos(Wm_lvec.Theta())")
-
-        ROOT.gInterpreter.Declare("#include <WWTools.h>")
-        self.Define("iso_lep_star_lvec", "WWTools::starVectorHagiwara(ub_leptonic_W_lvec, ub_iso_lep_lvec, {0, 0, 1}, Wm_lvec)")
-        self.Define("nu_star_lvec", "WWTools::starVectorHagiwara(ub_leptonic_W_lvec, ub_nu_lvec, {0, 0, 1}, Wm_lvec)")
-
-        self.Define("jet1_star_lvec", "WWTools::starVectorHagiwara(ub_hadronic_W_lvec, ub_jet1_lvec, {0, 0, 1}, Wm_lvec)")
-        self.Define("jet2_star_lvec", "WWTools::starVectorHagiwara(ub_hadronic_W_lvec, ub_jet2_lvec, {0, 0, 1}, Wm_lvec)")
-
-        lvec_list = ["iso_lep", "nu", "jet1", "jet2"]
-        for lvec in lvec_list:
-            self.Define(f"{lvec}_co", f"cos({lvec}_star_lvec.Theta())")
-            self.Define(f"{lvec}_ph", f"{lvec}_star_lvec.Phi()")
-
-        if self.truth_defined:
-            self.define_only_on(self.truth_categories, "true_Wm_lvec", "true_iso_lep_charge < 0. ? ub_true_leptonic_W_lvec : ub_true_hadronic_W_lvec")
-            self.define_only_on(self.truth_categories, "true_Wp_lvec", "true_iso_lep_charge > 0. ? ub_true_leptonic_W_lvec : ub_true_hadronic_W_lvec")
-            self.define_only_on(self.truth_categories, "true_Wm_cosTheta", "cos(true_Wm_lvec.Theta())")
-
-            self.define_only_on(self.truth_categories, "true_iso_lep_star_lvec", "WWTools::starVectorHagiwara(ub_true_leptonic_W_lvec, ub_true_lep_lvec, {0, 0, 1}, true_Wm_lvec)")
-            self.define_only_on(self.truth_categories, "true_nu_star_lvec", "WWTools::starVectorHagiwara(ub_true_leptonic_W_lvec, ub_true_nu_lvec, {0, 0, 1}, true_Wm_lvec)")
-            self.define_only_on(self.truth_categories, "true_jet1_star_lvec", "WWTools::starVectorHagiwara(ub_true_hadronic_W_lvec, ub_true_quark1_lvec, {0, 0, 1}, true_Wm_lvec)")
-            self.define_only_on(self.truth_categories, "true_jet2_star_lvec", "WWTools::starVectorHagiwara(ub_true_hadronic_W_lvec, ub_true_quark2_lvec, {0, 0, 1}, true_Wm_lvec)")
-            truth_lvec_list = ["true_iso_lep", "true_nu", "true_jet1", "true_jet2"]
-            for lvec in truth_lvec_list:
-                self.define_only_on(self.truth_categories, f"{lvec}_co", f"cos({lvec}_star_lvec.Theta())")
-                self.define_only_on(self.truth_categories, f"{lvec}_ph", f"{lvec}_star_lvec.Phi()")
-
-
-
-    def define_OO(self):
-        self.Define("co", "Wm_cosTheta")
-        ROOT.gInterpreter.Declare("""
-        double proba_fold_Wm(double co, double co11, double co12, double co2, double ph11, double ph12, double ph2, int cpl, int order)
-        {
-                                  double res = 0.;
-                                  res += OOTools::proba(co, co11, co2, ph11, ph2, cpl, false, order);
-                                  res += OOTools::proba(co, co12, co2, ph12, ph2, cpl, false, order);
-                                  return res;
-        }
-        double proba_fold_Wp(double co, double co1, double co21, double co22, double ph1, double ph21, double ph22, int cpl, int order)
-        {
-                                  double res = 0.;
-                                  res += OOTools::proba(co, co1, co21, ph1, ph21, cpl, false, order);
-                                  res += OOTools::proba(co, co1, co22, ph1, ph22, cpl, false, order);
-                                  return res;
-        }
-        """)
-
-        self.Define("S_0",   "iso_lep_charge < 0. ? proba_fold_Wp(co, iso_lep_co, jet1_co, jet2_co, iso_lep_ph, jet1_ph, jet2_ph, 0, 0) : proba_fold_Wm(co, jet1_co, jet2_co, nu_co, jet1_ph, jet2_ph, nu_ph, 0, 0)")
-        self.Define("S_1_1", "iso_lep_charge < 0. ? proba_fold_Wp(co, iso_lep_co, jet1_co, jet2_co, iso_lep_ph, jet1_ph, jet2_ph, 1, 1) : proba_fold_Wm(co, jet1_co, jet2_co, nu_co, jet1_ph, jet2_ph, nu_ph, 1, 1)")
-        self.Define("S_1_2", "iso_lep_charge < 0. ? proba_fold_Wp(co, iso_lep_co, jet1_co, jet2_co, iso_lep_ph, jet1_ph, jet2_ph, 2, 1) : proba_fold_Wm(co, jet1_co, jet2_co, nu_co, jet1_ph, jet2_ph, nu_ph, 2, 1)")
-        self.Define("S_1_3", "iso_lep_charge < 0. ? proba_fold_Wp(co, iso_lep_co, jet1_co, jet2_co, iso_lep_ph, jet1_ph, jet2_ph, 3, 1) : proba_fold_Wm(co, jet1_co, jet2_co, nu_co, jet1_ph, jet2_ph, nu_ph, 3, 1)")
-
-        self.Define("O_1", "S_1_1 / S_0")
-        self.Define("O_2", "S_1_2 / S_0")
-        self.Define("O_3", "S_1_3 / S_0")
-
-        # for debug
-        self.Define("co1", "iso_lep_charge < 0. ? iso_lep_co : -iso_lep_co")
-        self.Define("ph1", "iso_lep_charge < 0. ? iso_lep_ph : iso_lep_ph + ROOT::Math::Pi() <= ROOT::Math::Pi() ? iso_lep_ph + ROOT::Math::Pi() : iso_lep_ph - ROOT::Math::Pi()")
-
-        if self.truth_defined:
-            self.define_only_on(self.truth_categories, "true_co", "true_Wm_cosTheta")
-            self.define_only_on(self.truth_categories, "true_S_0",   "true_iso_lep_charge < 0. ? proba_fold_Wp(true_co, true_iso_lep_co, true_jet1_co, true_jet2_co, true_iso_lep_ph, true_jet1_ph, true_jet2_ph, 0, 0) : proba_fold_Wm(true_co, true_jet1_co, true_jet2_co, true_nu_co, true_jet1_ph, true_jet2_ph, true_nu_ph, 0, 0)")
-            for i in range(1, 4):
-                self.define_only_on(self.truth_categories, f"true_S_1_{i}", f"true_iso_lep_charge < 0. ? proba_fold_Wp(true_co, true_iso_lep_co, true_jet1_co, true_jet2_co, true_iso_lep_ph, true_jet1_ph, true_jet2_ph, {i}, 1) : proba_fold_Wm(true_co, true_jet1_co, true_jet2_co, true_nu_co, true_jet1_ph, true_jet2_ph, true_nu_ph, {i}, 1)")
-                self.define_only_on(self.truth_categories, f"true_O_{i}", f"true_S_1_{i} / true_S_0")
-            # for debug
-            self.define_only_on(self.truth_categories, "true_co1", "true_iso_lep_charge < 0. ? true_iso_lep_co : -true_iso_lep_co")
-            self.define_only_on(self.truth_categories, "true_ph1", "true_iso_lep_charge < 0. ? true_iso_lep_ph : true_iso_lep_ph + ROOT::Math::Pi() <= ROOT::Math::Pi() ? true_iso_lep_ph + ROOT::Math::Pi() : true_iso_lep_ph - ROOT::Math::Pi()")
-
-
     def define_truth_objects(self, categories: list[str]):
-        # take first genstat 1 e and nu and first two gen stat 2 pdg below 6
-        def first_stable(abs_pdg):
-            return f"""
-            auto& genStat = MCParticlesSkimmed.generatorStatus;
-            auto& pdg = MCParticlesSkimmed.PDG;
-            auto mask = genStat == 1 && abs(pdg) == {abs_pdg};
-            // abuse ArgMax to get the first set position
-            auto idx = ArgMax(mask);
-            return idx;
-            """
         def first_two_unstable_below(abs_pdg):
             return f"""
             auto& genStat = MCParticlesSkimmed.generatorStatus;
@@ -202,64 +107,42 @@ class WWAnalysis(Analysis):
             idx2++;
             return ROOT::VecOps::RVec({{idx, idx2}});
             """
-        # FIXME: this selection will return over optimistic results as it will compare the MC electron after FSR with the reconstructed one
-        # making the reconstructed one appear less wrong than it is, more correct for the purpose of OO would be to take it directly after the ME calc
-        if not categories:
-            self.Define("true_lep_idx", first_stable(11))
-            self.Define("true_nu_idx", first_stable(12))
-            self.Define("true_quarks_idcs", first_two_unstable_below(6))
-            self.Define("true_quark1_idx", "true_quarks_idcs[0]")
-            self.Define("true_quark2_idx", "true_quarks_idcs[1]")
-            self.Define("true_lep_lvec", make_lvec_M("MCParticlesSkimmed", "true_lep_idx"))
-            self.Define("true_nu_lvec", make_lvec_M("MCParticlesSkimmed", "true_nu_idx"))
-            self.Define("true_quark1_lvec", make_lvec_M("MCParticlesSkimmed", "true_quark1_idx"))
-            self.Define("true_quark2_lvec", make_lvec_M("MCParticlesSkimmed", "true_quark2_idx"))
-            self.Define("true_leptonic_W_lvec", "true_lep_lvec + true_nu_lvec")
-            self.Define("true_hadronic_W_lvec", "true_quark1_lvec + true_quark2_lvec")
-            self.Define("true_iso_lep_charge", "MCParticlesSkimmed.PDG[true_lep_idx] > 0. ? -1. : 1.")
-        else:
-            self.define_only_on(categories, "true_lep_idx", first_stable(11))
-            self.define_only_on(categories, "true_nu_idx", first_stable(12))
-            self.define_only_on(categories, "true_quarks_idcs", first_two_unstable_below(6))
-            self.define_only_on(categories, "true_quark1_idx", "true_quarks_idcs[0]")
-            self.define_only_on(categories, "true_quark2_idx", "true_quarks_idcs[1]")
-            self.define_only_on(categories, "true_lep_lvec", make_lvec_M("MCParticlesSkimmed", "true_lep_idx"))
-            self.define_only_on(categories, "true_nu_lvec", make_lvec_M("MCParticlesSkimmed", "true_nu_idx"))
-            self.define_only_on(categories, "true_quark1_lvec", make_lvec_M("MCParticlesSkimmed", "true_quark1_idx"))
-            self.define_only_on(categories, "true_quark2_lvec", make_lvec_M("MCParticlesSkimmed", "true_quark2_idx"))
-            self.define_only_on(categories, "true_leptonic_W_lvec", "true_lep_lvec + true_nu_lvec")
-            self.define_only_on(categories, "true_hadronic_W_lvec", "true_quark1_lvec + true_quark2_lvec")
-            self.define_only_on(categories, "true_iso_lep_charge", "MCParticlesSkimmed.PDG[true_lep_idx] > 0. ? -1. : 1.")
+
+
+        def first_two_unstable_between(abs_pdg_min, abs_pdg_max):
+            return f"""
+            auto& genStat = MCParticlesSkimmed.generatorStatus;
+            auto& pdg = MCParticlesSkimmed.PDG;
+            auto mask = genStat == 2 && abs(pdg) < {abs_pdg_max} && abs(pdg) > {abs_pdg_min};
+            // abuse ArgMax to get the first set position
+            auto idx = ArgMax(mask);
+            // Drop the first index and use ArgMax again
+            auto idx2 = ArgMax(Drop(mask, {{idx}}));
+            // increment by one to compensate for removal of the first
+            idx2++;
+            return ROOT::VecOps::RVec({{idx, idx2}});
+            """
+
+
+        self._define(("true_lep_idcs", first_two_unstable_between(10, 13)), categories)
+        self._define(("true_lep_idx", "true_lep_idcs[0]"), categories)
+        self._define(("true_nu_idx", "true_lep_idcs[1]"), categories)
+        self._define(("true_quarks_idcs", first_two_unstable_below(6)), categories)
+        self._define(("true_quark1_idx", "true_quarks_idcs[0]"), categories)
+        self._define(("true_quark2_idx", "true_quarks_idcs[1]"), categories)
+        self._define(("true_lep_lvec", make_lvec_M("MCParticlesSkimmed", "true_lep_idx")), categories)
+        self._define(("true_nu_lvec", make_lvec_M("MCParticlesSkimmed", "true_nu_idx")), categories)
+        self._define(("true_quark1_lvec", make_lvec_M("MCParticlesSkimmed", "true_quark1_idx")), categories)
+        self._define(("true_quark2_lvec", make_lvec_M("MCParticlesSkimmed", "true_quark2_idx")), categories)
+        self._define(("true_leptonic_W_lvec", "true_lep_lvec + true_nu_lvec"), categories)
+        self._define(("true_hadronic_W_lvec", "true_quark1_lvec + true_quark2_lvec"), categories)
+        self._define(("true_iso_lep_charge", "MCParticlesSkimmed.PDG[true_lep_idx] > 0. ? -1. : 1."), categories)
 
         self.truth_defined = True
         self.truth_categories = categories
 
 
-    def book_OO_matrix(self):
-        for i in range(1, 4):
-            for j in range(1, 4):
-                self.Define(f"c_{i}{j}", f"O_{i} * O_{j}")
-                self.book_sum(f"c_{i}{j}", f"c_{i}{j}")
-                if self.truth_defined:
-                    self.define_only_on(self.truth_categories, f"true_c_{i}{j}", f"true_O_{i} * true_O_{j}")
-                    self.book_sum(f"true_c_{i}{j}", f"true_c_{i}{j}", categories=self.truth_categories)
-
-
-
-    def get_OO_matrix_normalized(self, int_lumi: float = 5000, e_pol: float = 0.0, p_pol: float = 0.0):
-        values = [self.get_mean(f"c_{i}{j}", int_lumi, e_pol, p_pol) for i in range(1,4) for j in range(1,4)]
-        c = np.asarray(values).reshape((3, 3))
-        return c
-
-
-    def get_true_OO_matrix_normalized(self, int_lumi: float = 5000, e_pol: float = 0.0, p_pol: float = 0.0):
-        values = [self.get_mean(f"true_c_{i}{j}", int_lumi, e_pol, p_pol) for i in range(1,4) for j in range(1,4)]
-        c = np.asarray(values).reshape((3, 3))
-        return c
-
-
     def initialise_omega_wrappers(self, configurations: dict[str,dict[str, float]]):
-
         whizard_prefix = subprocess.run(['whizard-config', '--prefix'], capture_output=True, encoding='ascii').stdout.strip()
         whizard_libs = f"{whizard_prefix}/lib/"
         # print(whizard_libs)
@@ -316,7 +199,6 @@ class WWAnalysis(Analysis):
             self.Define(f"reco_sqme_21_{name}", omw, ["reco_ME_momenta_21", "reco_ME_flv"])
 
 
-    # FIXME: urgh only do all this for the signal categories
     def book_weights(self):
         self.define_only_on(self._signal_categories, "lep_charge", "MCParticlesSkimmed.charge[true_lep_idx]")
         self.define_only_on(self._signal_categories, "mc_ME_flv", "lep_charge > 0 ? 1 : 2")
@@ -340,6 +222,62 @@ class WWAnalysis(Analysis):
                     """)
         for name, omw in self._omega_wrappers.items():
             self.define_only_on(self._signal_categories, f"mc_sqme_{name}", omw, ["mc_ME_momenta", "mc_ME_flv"])
-            if not name == "nominal":
-                # divide by recalculated nominal as all the ILD values are broken...
-                self.define_only_on(self._signal_categories, f"weight_{name}", f"mc_sqme_{name} / mc_sqme_nominal")
+            # if not name == "nominal":
+            # divide by recalculated nominal as all the ILD values are broken...
+            self.define_only_on(self._signal_categories, f"weight_{name}", f"mc_sqme_{name} / mc_sqme_nominal")
+
+
+    def define_optimal_observables(self, alt_handler: AltSetupHandler, only=None):
+        for name, var in alt_handler.get_named_variations_it(only):
+            self.Define(f"O_{name}", f"{1/var} * (reco_sqme_12_nominal + reco_sqme_21_nominal - reco_sqme_12_{name} - reco_sqme_21_{name}) / (reco_sqme_12_nominal + reco_sqme_21_nominal)")
+            self._define((f"mc_O_{name}", f"{1/var} * (mc_sqme_nominal - mc_sqme_{name}) / mc_sqme_nominal"), self._signal_categories)
+
+
+    def plot_template_bins(self, observable_name: str, alt_handler: AltSetupHandler, only=None):
+        template_name = f"tmpl_{observable_name}"
+        varied_histos = self._varied_histograms[template_name]
+        canvases = {}
+        for process_name, v_histos in varied_histos.items():
+            nominal_histo = v_histos["nominal"]
+            if only:
+                raise NotImplementedError
+            par_graphs = {}
+            par_canvases = {}
+            par_funs = {}
+            for par_name, vars in alt_handler.get_variations_ext().items():
+                x_vals = sorted(vars)
+                r_histos = []
+                for v in x_vals:
+                    var_name = alt_handler.make_name(par_name, v)
+                    r_histos.append(v_histos[f"weight:{var_name}"] / nominal_histo)
+
+                bin_graphs = []
+                bin_canvases = []
+                bin_funs = []
+                for i in range(1, nominal_histo.GetNcells()-1):
+                    graph = ROOT.TGraph()
+                    for j, v in enumerate(x_vals):
+                        if j > 0 and v == -x_vals[j-1]:
+                            graph.AddPoint(0., 1.)
+                        graph.AddPoint(v, r_histos[j].GetBinContent(i))
+                    fun = ROOT.TF1("", "1 + [0]*x + [1]*x*x", x_vals[0], x_vals[-1])
+                    fun.SetParameter(0, 1.)
+                    fun.SetParameter(1, 0.1)
+                    graph.Fit(fun)
+                    bin_funs.append(fun)
+                    bin_graphs.append(graph)
+                    c = ROOT.TCanvas()
+                    graph.Draw("apl")
+                    # fun.Draw("same")
+                    graph.SetTitle(f"{process_name} bin {i};{par_name}")
+                    c.Draw()
+                    bin_canvases.append(c)
+                    # print("hello")
+                par_graphs[par_name] = bin_graphs
+                par_canvases[par_name] = bin_canvases
+                par_funs[par_name] = bin_funs
+            self._template_graphs[process_name] = par_graphs
+            canvases[process_name] = par_canvases
+            self._template_funs[process_name] = par_funs
+        self._canvases["template_bins"] = canvases
+
