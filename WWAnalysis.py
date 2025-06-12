@@ -37,6 +37,7 @@ class WWAnalysis(Analysis):
     _signal_categories: list[str]
     _template_graphs = {}
     _template_funs = {}
+    _template_pars = {}
 
     def __init__(self, dataset):
         self.truth_defined = False
@@ -238,11 +239,14 @@ class WWAnalysis(Analysis):
         varied_histos = self._varied_histograms[template_name]
         template_graphs = {}
         template_funs = {}
+        template_pars = {}
         for process_name, v_histos in varied_histos.items():
             nominal_histo = v_histos["nominal"]
             par_graphs = {}
             par_funs = {}
+            par_pars = {}
             for par_name, vars in alt_handler.get_variations_ext().items():
+                par_histo = nominal_histo.Clone()
                 x_vals = sorted(vars)
                 r_histos = []
                 for v in x_vals:
@@ -265,15 +269,19 @@ class WWAnalysis(Analysis):
                     graph.Fit(fun, "Q")
                     par1 = fun.GetParameter(0)
                     par2 = fun.GetParameter(1)
+                    par_histo.SetBinContent(i, par1)
                     # print(f"parameters after fit: ({par1}, {par2})")
                     bin_funs.append(fun)
                     bin_graphs.append(graph)
                 par_graphs[par_name] = bin_graphs
                 par_funs[par_name] = bin_funs
+                par_pars[par_name] = par_histo
             template_graphs[process_name] = par_graphs
             template_funs[process_name] = par_funs
+            template_pars[process_name] = par_pars
         self._template_graphs[observable_name] = template_graphs
         self._template_funs[observable_name] = template_funs
+        self._template_pars[observable_name] = template_pars
 
 
     def plot_template_bins(self, observable_name: str, plot_path: str = None):
@@ -299,3 +307,16 @@ class WWAnalysis(Analysis):
                 par_canvases[par_name] = bin_canvas
             canvases[process_name] = par_canvases
         self._canvases[f"{observable_name}_template_bins"] = canvases
+
+
+    def write_fit_inputs(self, observable_names: list[str], output_path: str):
+        self.store_raw_histograms(observable_names, output_path)
+        with ROOT.TFile(f"{output_path}/raw_histograms.root", "update") as output_file:
+            dir = output_file.mkdir("template_parametrisations")
+            for observable in observable_names:
+                obs_dir = dir.mkdir(observable)
+                for process_name, template_pars in self._template_pars[observable].items():
+                    process_dir = obs_dir.mkdir(process_name)
+                    process_dir.cd()
+                    for name, h in template_pars.items():
+                        h.Write(name)

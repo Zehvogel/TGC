@@ -207,7 +207,9 @@ class Analysis:
                     # add meta information
                     meta_dir = dir.mkdir("meta")
                     meta_dir.cd()
-                    weight_key = k.removesuffix("_signal").removesuffix("_bkg")
+                    # FIXME
+                    # weight_key = k.removesuffix("_signal").removesuffix("_bkg")
+                    weight_key = k
                     lumi, e_pol, p_pol = self._dataset.get_lumi_and_pol(weight_key)
                     # FIXME: great now instead of a stupid error this even crashes the kernel!
                     lumi_par = ROOT.TParameter["float"]("lumi", lumi)
