@@ -233,16 +233,14 @@ class WWAnalysis(Analysis):
             self._define((f"mc_O_{name}", f"{1/var} * (mc_sqme_nominal - mc_sqme_{name}) / mc_sqme_nominal"), self._signal_categories)
 
 
-    def plot_template_bins(self, observable_name: str, alt_handler: AltSetupHandler, only=None):
+    def calculate_template_parametrisation(self, observable_name: str, alt_handler: AltSetupHandler):
         template_name = f"tmpl_{observable_name}"
         varied_histos = self._varied_histograms[template_name]
-        canvases = {}
+        template_graphs = {}
+        template_funs = {}
         for process_name, v_histos in varied_histos.items():
             nominal_histo = v_histos["nominal"]
-            if only:
-                raise NotImplementedError
             par_graphs = {}
-            par_canvases = {}
             par_funs = {}
             for par_name, vars in alt_handler.get_variations_ext().items():
                 x_vals = sorted(vars)
@@ -252,9 +250,10 @@ class WWAnalysis(Analysis):
                     r_histos.append(v_histos[f"weight:{var_name}"] / nominal_histo)
 
                 bin_graphs = []
-                bin_canvases = []
                 bin_funs = []
-                for i in range(1, nominal_histo.GetNcells()-1):
+                # ignore over/underflow bins
+                n_bins = nominal_histo.GetNcells() - 2
+                for i in range(1, n_bins + 1):
                     graph = ROOT.TGraph()
                     for j, v in enumerate(x_vals):
                         if j > 0 and v == -x_vals[j-1]:
@@ -263,21 +262,40 @@ class WWAnalysis(Analysis):
                     fun = ROOT.TF1("", "1 + [0]*x + [1]*x*x", x_vals[0], x_vals[-1])
                     fun.SetParameter(0, 1.)
                     fun.SetParameter(1, 0.1)
-                    graph.Fit(fun)
+                    graph.Fit(fun, "Q")
+                    par1 = fun.GetParameter(0)
+                    par2 = fun.GetParameter(1)
+                    # print(f"parameters after fit: ({par1}, {par2})")
                     bin_funs.append(fun)
                     bin_graphs.append(graph)
-                    c = ROOT.TCanvas()
-                    graph.Draw("apl")
-                    # fun.Draw("same")
-                    graph.SetTitle(f"{process_name} bin {i};{par_name}")
-                    c.Draw()
-                    bin_canvases.append(c)
-                    # print("hello")
                 par_graphs[par_name] = bin_graphs
-                par_canvases[par_name] = bin_canvases
                 par_funs[par_name] = bin_funs
-            self._template_graphs[process_name] = par_graphs
-            canvases[process_name] = par_canvases
-            self._template_funs[process_name] = par_funs
-        self._canvases["template_bins"] = canvases
+            template_graphs[process_name] = par_graphs
+            template_funs[process_name] = par_funs
+        self._template_graphs[observable_name] = template_graphs
+        self._template_funs[observable_name] = template_funs
 
+
+    def plot_template_bins(self, observable_name: str, plot_path: str = None):
+        canvases = {}
+        template_graphs = self._template_graphs[observable_name]
+        for process_name, par_graphs in template_graphs.items():
+            par_canvases = {}
+            for par_name, bin_graphs in par_graphs.items(): 
+                n_bins = len(bin_graphs)
+                # x_width = min((n_bins+1)*ROOT.gStyle.GetCanvasDefW() // 2, 8000)
+                x_width = (n_bins+1)*ROOT.gStyle.GetCanvasDefW() // 2
+                bin_canvas = ROOT.TCanvas("", "", x_width, ROOT.gStyle.GetCanvasDefH())
+                bin_canvas.Divide(n_bins+1, 1, 0, 0)
+                for i in range(1, n_bins + 1):
+                    graph = bin_graphs[i-1]
+                    bin_canvas.cd(i + 1)
+                    graph.Draw("apl")
+                    graph.SetTitle(f"{process_name} bin {i};{par_name}")
+                # TODO: scale all graphs to the same y-axis and plot it on the first canvas...
+                bin_canvas.Draw()
+                if plot_path:
+                    bin_canvas.SaveAs(f"{plot_path}/{observable_name}_{process_name}_{par_name}.pdf")
+                par_canvases[par_name] = bin_canvas
+            canvases[process_name] = par_canvases
+        self._canvases[f"{observable_name}_template_bins"] = canvases

@@ -56,6 +56,7 @@ ildStyle->SetTextFont(42);
 ildStyle->SetFrameLineWidth(2);
 ildStyle->SetFuncWidth(2);
 ildStyle->SetHistLineWidth(2);
+ildStyle->SetLineScalePS(1);
 
 //set the number of divisions to show
 ildStyle->SetNdivisions(506, "xy");
