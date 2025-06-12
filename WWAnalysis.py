@@ -4,6 +4,8 @@ import numpy as np
 from OO.whizard.model_parser import ModelParser
 import subprocess
 from alt_setup_creator import AltSetupHandler
+from itertools import combinations
+import math
 
 
 def make_lvec_E(column: str, idx: str):
@@ -234,6 +236,17 @@ class WWAnalysis(Analysis):
             self._define((f"mc_O_{name}", f"{1/var} * (mc_sqme_nominal - mc_sqme_{name}) / mc_sqme_nominal"), self._signal_categories)
 
 
+    def book_oo_matrix(self, observables: list[str]):
+        # TODO: all or only signal???
+        elements= ["*".join(c) for c in combinations(observables, 2)]
+        self._define(("oo_matrix", f"ROOT::RVecD{{{','.join(elements)}}}"), self._signal_categories)
+        self.book_sum("oo_matrix", "oo_matrix", self._signal_categories)
+        # for o_i, o_j in combinations(observables, 2):
+            # self._define((f"{o_i}_times_{o_j}", f"{o_i} * {o_j}"), self._signal_categories)
+        # n = math.comb(2, len(observables))
+
+
+
     def calculate_template_parametrisation(self, observable_name: str, alt_handler: AltSetupHandler):
         template_name = f"tmpl_{observable_name}"
         varied_histos = self._varied_histograms[template_name]
@@ -311,6 +324,7 @@ class WWAnalysis(Analysis):
 
     def write_fit_inputs(self, observable_names: list[str], output_path: str):
         self.store_raw_histograms(observable_names, output_path)
+        # TODO: also write OO cov_matrix
         with ROOT.TFile(f"{output_path}/raw_histograms.root", "update") as output_file:
             dir = output_file.mkdir("template_parametrisations")
             for observable in observable_names:
