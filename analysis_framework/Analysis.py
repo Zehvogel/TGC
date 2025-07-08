@@ -66,6 +66,12 @@ class Analysis:
             yield k, res
 
 
+    def _call_on_frames_typed(self, method_name: str, typename: str, args, categories: list[str]|None = None):
+        for k, df in self._get_frames(categories):
+            res = getattr(df, method_name)[typename](*args)
+            yield k, res
+
+
     def _apply_to_frames(self, method_name: str, args, categories: list[str]|None = None):
         for k, res_df in self._call_on_frames(method_name, args, categories):
             self._df[k] = res_df
@@ -121,16 +127,20 @@ class Analysis:
                 self.Define(par_col_name, f"Parameters.get<{p_type}>(\"{p_name}\").value_or({p_alt})")
 
 
-    def book_some_method(self, method_name: str, args, categories: list[str]|None = None):
+    def book_some_method(self, method_name: str, args, categories: list[str]|None = None, typename: str|None = None):
         results = {}
-        for k, res in self._call_on_frames(method_name, args, categories):
+        if typename:
+            it = self._call_on_frames_typed(method_name, typename, args, categories)
+        else:
+            it = self._call_on_frames(method_name, args, categories)
+        for k, res in it:
             results[k] = res
             self._booked_objects.append(res)
         return results
 
 
-    def book_sum(self, name: str, column: str, categories: list[str]|None = None):
-        self._sums[name] = self.book_some_method("Sum", (column,), categories)
+    def book_sum(self, name: str, column: str, categories: list[str]|None = None, typename: str|None = None):
+        self._sums[name] = self.book_some_method("Sum", (column,), categories, typename)
 
 
     def book_histogram_1D(self, name: str, column: str, config: tuple, categories: list[str]|None = None):
@@ -530,7 +540,7 @@ class Analysis:
                 self._booked_objects.append(snapshot)
                 # now transfer metadata
                 # need to get metadata from before the signal definition cut for correct weight
-                # FIXME: this has to be done as a change to the dataset at category creation time instead!!! 
+                # FIXME: this has to be done as a change to the dataset at category creation time instead!!!
                 # old_frame = frame.removesuffix("_bkg").removesuffix("_signal"
                 old_frame = frame
                 *_, old_meta = self._dataset.get_sample(old_frame)

@@ -4,9 +4,8 @@ import numpy as np
 from OO.whizard.model_parser import ModelParser
 import subprocess
 from alt_setup_creator import AltSetupHandler
-from itertools import combinations
-import math
-
+from itertools import combinations_with_replacement, product
+from math import sqrt
 
 def make_lvec_E(column: str, idx: str):
     return f"""
@@ -40,6 +39,7 @@ class WWAnalysis(Analysis):
     _template_graphs = {}
     _template_funs = {}
     _template_pars = {}
+    _oo_matrix = {}
 
     def __init__(self, dataset):
         self.truth_defined = False
@@ -238,13 +238,29 @@ class WWAnalysis(Analysis):
 
     def book_oo_matrix(self, observables: list[str]):
         # TODO: all or only signal???
-        elements= ["*".join(c) for c in combinations(observables, 2)]
+        # FIXME: well this would be the clean way but all the symmetric matrix implementations in ROOT suck big time
+        # elements= ["*".join(c) for c in combinations_with_replacement(observables, 2)]
+        elements= ["*".join(c) for c in product(observables, repeat=2)]
         self._define(("oo_matrix", f"ROOT::RVecD{{{','.join(elements)}}}"), self._signal_categories)
-        self.book_sum("oo_matrix", "oo_matrix", self._signal_categories)
-        # for o_i, o_j in combinations(observables, 2):
-            # self._define((f"{o_i}_times_{o_j}", f"{o_i} * {o_j}"), self._signal_categories)
-        # n = math.comb(2, len(observables))
-
+        n = len(elements)
+        res = ROOT.RVecD(n, 0.)
+        # f = ROOT.VecOps.__add__
+        # f = lambda x, y: x + y
+        # ROOT.gInterpreter.Declare("auto foo = [] (const ROOT::RVecD& a, const ROOT::RVecD& b) {return a+b;};")
+        # ROOT.gInterpreter.Declare("""
+        # ROOT::RVecD rvec_reduce_d(ROOT::RVecD a, ROOT::RVecD b) {
+        #     return a + b;
+        # }
+        # """)
+        ROOT.gInterpreter.Declare("""
+        struct rvec_reducer_d {
+            ROOT::RVecD operator()(ROOT::RVecD a, ROOT::RVecD b) {
+            return a + b;
+            }
+        };
+        """)
+        f = ROOT.rvec_reducer_d()
+        self._oo_matrix = self.book_some_method("Reduce", (f, "oo_matrix", res), categories=self._signal_categories)
 
 
     def calculate_template_parametrisation(self, observable_name: str, alt_handler: AltSetupHandler):
@@ -302,7 +318,7 @@ class WWAnalysis(Analysis):
         template_graphs = self._template_graphs[observable_name]
         for process_name, par_graphs in template_graphs.items():
             par_canvases = {}
-            for par_name, bin_graphs in par_graphs.items(): 
+            for par_name, bin_graphs in par_graphs.items():
                 n_bins = len(bin_graphs)
                 # x_width = min((n_bins+1)*ROOT.gStyle.GetCanvasDefW() // 2, 8000)
                 x_width = (n_bins+1)*ROOT.gStyle.GetCanvasDefW() // 2
@@ -334,3 +350,12 @@ class WWAnalysis(Analysis):
                     process_dir.cd()
                     for name, h in template_pars.items():
                         h.Write(name)
+            oo_mat_dir = output_file.mkdir("oo_matrix")
+            oo_mat_dir.cd()
+            for name, oo_mat in self._oo_matrix.items():
+                # mat_par = ROOT.TParameter["ROOT::RVecD"](name, oo_mat.GetValue())
+                # mat_par.Write()
+                # smat = ROOT.Math.SMatrix["double", oo_mat.size()](oo_mat.begin(), oo_mat.end())
+                # smat.Write(name)
+                mat = ROOT.TMatrixDSym(int(sqrt(oo_mat.size())), oo_mat.data())
+                mat.Write(name)
