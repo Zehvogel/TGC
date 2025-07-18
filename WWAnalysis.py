@@ -239,8 +239,8 @@ class WWAnalysis(Analysis):
     def book_oo_matrix(self, observables: list[str]):
         # TODO: all or only signal???
         # FIXME: well this would be the clean way but all the symmetric matrix implementations in ROOT suck big time
-        # elements= ["*".join(c) for c in combinations_with_replacement(observables, 2)]
-        elements= ["*".join(c) for c in product(observables, repeat=2)]
+        elements= ["*".join(c) for c in combinations_with_replacement(observables, 2)]
+        # elements= ["*".join(c) for c in product(observables, repeat=2)]
         self._define(("oo_matrix", f"ROOT::RVecD{{{','.join(elements)}}}"), self._signal_categories)
         n = len(elements)
         res = ROOT.RVecD(n, 0.)
@@ -357,5 +357,7 @@ class WWAnalysis(Analysis):
                 # mat_par.Write()
                 # smat = ROOT.Math.SMatrix["double", oo_mat.size()](oo_mat.begin(), oo_mat.end())
                 # smat.Write(name)
-                mat = ROOT.TMatrixDSym(int(sqrt(oo_mat.size())), oo_mat.data())
-                mat.Write(name)
+                # mat = ROOT.TMatrixDSym(int(sqrt(oo_mat.size())), oo_mat.data())
+                # mat.Write(name)
+                mat = ROOT.Math.SVector[f"double, {oo_mat.size()}"](oo_mat.begin(), oo_mat.end())
+                oo_mat_dir.WriteObject(mat, name)

@@ -1,10 +1,10 @@
 #pragma once
-#include <root/TMatrixDSym.h>
-#include <root/TVectorD.h>
-#include <root/TH1D.h>
-#include <root/Math/SMatrix.h>
-#include <root/Math/SVector.h>
-#include <root/Math/MatrixFunctions.h>
+#include <TMatrixDSym.h>
+#include <TVectorD.h>
+#include <TH1D.h>
+#include <Math/SMatrix.h>
+#include <Math/SVector.h>
+#include <Math/MatrixFunctions.h>
 
 // struct fit_fun {
 //     unsigned short m_n_obs;
@@ -43,27 +43,51 @@
 //     }
 // };
 
+
+template <unsigned short n_obs>
+struct test_struct {
+    using Mat_t = ROOT::Math::SMatrix<double, n_obs, n_obs, ROOT::Math::MatRepSym<double, n_obs>>;
+    std::vector<Mat_t> m_C;
+
+};
+
+template <unsigned short n_obs>
 struct fit_fun {
-    const unsigned short m_n_obs;
+    // const unsigned short m_n_obs;
     const unsigned short m_n_couplings;
-    // already int in ROOT...
-    const int m_n_bins;
     // pols: LL, LR, RL, RR
     const double m_process_e_pol[4] = {-1., -1., 1., 1.,};
     const double m_process_p_pol[4] = {-1., 1., -1., 1.,};
     // XXX: this could probably be better than just a bunch of vectors...
-    std::vector<const double> m_template_lumi;
-    std::vector<std::vector<std::vector<std::vector<const double>>>> m_template_param;
-    std::vector<std::vector<std::vector<const double>>> m_bin_contents_sm;
-    std::vector<const double> m_bin_midpoints;
+    // but passing a vector from python is trivial while arrays are annoying
+    std::vector<double> m_template_lumi;
+    std::vector<std::vector<std::vector<std::vector<double>>>> m_template_param;
+    std::vector<std::vector<std::vector<double>>> m_bin_contents_sm;
+    // assume all obs having the same binning for now, but can be changed
+    // already int in ROOT...
+    const int m_n_bins;
+    std::vector<double> m_bin_midpoints;
+    using Mat_t = ROOT::Math::SMatrix<double, n_obs, n_obs, ROOT::Math::MatRepSym<double, n_obs>>;
+    using Vec_t = ROOT::Math::SVector<double, n_obs>;
+    using MatAsVec_t = ROOT::Math::SVector<double, n_obs * (n_obs + 1) / 2>;
+    std::vector<Mat_t> m_C;
 
-    fit_fun(const unsigned short n_obs, const unsigned short n_couplings, const int n_bins, std::vector<const double> template_lumi,
-        std::vector<std::vector<std::vector<std::vector<const double>>>> template_param,
-        std::vector<std::vector<std::vector<const double>>> bin_contents_sm,
-        std::vector<const double> bin_midpoints
-    ) : m_n_obs(n_obs), m_n_couplings(n_couplings), m_n_bins(n_bins), m_template_lumi(template_lumi)
+    fit_fun(/*const unsigned short n_obs,*/ const unsigned short n_couplings, const int n_bins, std::vector<double> template_lumi,
+        std::vector<std::vector<std::vector<std::vector<double>>>> template_param,
+        std::vector<std::vector<std::vector<double>>> bin_contents_sm,
+        std::vector<double> bin_midpoints,
+        std::vector<MatAsVec_t> C
+    ) : m_n_couplings(n_couplings), m_n_bins(n_bins), m_template_lumi(template_lumi),
+        m_template_param(template_param),
+        m_bin_contents_sm(bin_contents_sm),
+        m_bin_midpoints(bin_midpoints)
     {
-        // empty?
+        std::cout << "start constructor" << std::endl;
+        m_C.reserve(4);
+        for (const auto& mvec : C) {
+            m_C.push_back(Mat_t(mvec, true));
+        }
+        std::cout << "finished constructor" << std::endl;
     }
 
     // takes m_n_obs many observables
@@ -82,8 +106,9 @@ struct fit_fun {
             helicity_weight[i] = 0.25 * (1.0 + beam_e_pol * m_process_e_pol[i]) * (1.0 + beam_p_pol * m_process_p_pol[i]);
         }
 
-        double diff[m_n_obs];
-        for (unsigned short i = 0; i < m_n_obs; i++) {
+        // TODO: rewrite to directly use vectors later!
+        double diff[n_obs];
+        for (unsigned short i = 0; i < n_obs; i++) {
             double temp = 0;
             // loop over helicity combinations
             for (int j = 0; j < 4; j++) {
@@ -96,7 +121,8 @@ struct fit_fun {
                         // TODO add mixed and quadratic terms
                         bin_modifier += couplings[k] * m_template_param[i][j][k][l];
                     }
-                    double bin_content = m_bin_contents_sm[i][j][l] * lumi_scale[j];
+                    // XXX: order is unfortunately different here...
+                    double bin_content = m_bin_contents_sm[j][i][l] * lumi_scale[j];
                     helicity_contribution += bin_modifier * bin_content * m_bin_midpoints[l];
                 }
                 temp += helicity_weight[j] * helicity_contribution;
@@ -106,34 +132,207 @@ struct fit_fun {
         }
 
         // recalculate C_inv from current values of lumi and polarisation
-        // might kill the performance a bit in the case that they are fixed...
-        unsigned int n = m_n_obs * (m_n_obs + 1) / 2;
-        double C_inv[n];
-        for (unsigned int i = 0; i < n; i++) {
-            double c = 0;
-            for (unsigned short j = 0; j < 4; j++) {
-                // inverse lumi scale as we want C~_inv with C~ = lumi*C
-                // FIXME: is inversion of a matrix a linear operation?? I don't think so!
-                // So I would need to assemble a matrix C from the helicities and then invert it in every call???????
-                // that will certainly slow things down...
-                // TODO: change it all to use SMatrix and SVector, I will not implement cramers rule for n_obs = 6 myself!
-                c = (1 / lumi_scale[j]) * helicity_weight[j] * m_C_inv[j][i];
-            }
-            C_inv[i] = c;
+        // might kill the performance in the case that they are fixed...
+        Mat_t C_inv;
+        for (unsigned short i = 0; i < 4; i++) {
+            C_inv += lumi_scale[i] * helicity_weight[i] * m_C[i];
+        }
+        // TODO: figure out if fast is good enough
+        // looks like it but first debug the rest...
+        // C_inv.InvertFast();
+        C_inv.Invert();
+
+        Vec_t diff_v(diff, n_obs);
+
+        double chi2 = ROOT::Math::Similarity(diff_v, C_inv);
+        // std::cout << "chi2: " << chi2 << std::endl;
+        // std::cout << "diff_v: " << diff_v << std::endl;
+        // std::cout << "C_inv: " << C_inv << std::endl;
+        return chi2;
+    }
+    // takes m_n_obs many observables
+    // and 1 (lumi) + 2 (beam pols) + m_n_couplings many parameters
+    double operator()(std::vector<double> obs, std::vector<double> pars) {
+        return operator()(obs.data(), pars.data());
+    }
+};
+
+template <unsigned short n_obs, unsigned short n_bins, unsigned short n_couplings>
+struct fit_fun2 {
+    using Mat_t = ROOT::Math::SMatrix<double, n_obs, n_obs, ROOT::Math::MatRepSym<double, n_obs>>;
+    using Vec_t = ROOT::Math::SVector<double, n_obs>;
+    using MatAsVec_t = ROOT::Math::SVector<double, n_obs * (n_obs + 1) / 2>;
+    // XXX: needs to be scaled to 1 fb^-1
+    std::vector<Mat_t> m_C;
+
+    // requires all observables to have the same binning...
+    using BinVec_t = ROOT::Math::SVector<double, n_bins>;
+    using CouplingVec_t = ROOT::Math::SVector<double, n_couplings>;
+    BinVec_t m_binCenters;
+    // std::array<std::vector<BinVec_t>, 4> m_templatePar;
+    using TemplMat_t = ROOT::Math::SMatrix<double, n_couplings, n_bins>;
+    std::array<std::array<TemplMat_t, 4>, n_obs> m_templatePars;
+
+    // XXX: needs to be scaled to 1 fb^-1
+    std::array<std::array<BinVec_t, 4>, n_obs> m_signalHists;
+
+    // pols: LL, LR, RL, RR
+    const double m_process_e_pol[4] = {-1., -1., 1., 1.,};
+    const double m_process_p_pol[4] = {-1., 1., -1., 1.,};
+
+    fit_fun2(
+        std::vector<std::vector<TH1D*>> signalHists,
+        std::vector<double> signalSampleLumi,
+        std::vector<MatAsVec_t> C,
+        std::vector<std::vector<std::vector<TH1D*>>> templatePars
+    ) {
+        std::cout << "start constructor" << std::endl;
+        // sanity checks of the vectors
+        if (signalHists.size() != n_obs) {
+            std::cout << "ERROR: provided signalHists.size() == " << signalHists.size() << " but n_obs == " << n_obs << std::endl;
+            return;
+        }
+        if (signalSampleLumi.size() != 4) {
+            std::cout << "ERROR: provided signalSampleLumi.size() == " << signalSampleLumi.size() << "but should be 4" << std::endl;
+            return;
+        }
+        if (templatePars.size() != n_obs) {
+            std::cout << "ERROR: provided templatePars.size() == " << templatePars.size() << " but n_obs == " << n_obs << std::endl;
+            return;
+        }
+        if (templatePars[0].size() != 4) {
+            std::cout << "ERROR: provided templatePars[0].size() == " << templatePars[0].size() << " but should be 4" << std::endl;
+            return;
+        }
+        if (templatePars[0][0].size() != n_couplings) {
+            std::cout << "ERROR: provided templatePars[0][0].size() == " << templatePars[0][0].size() << " but n_couplings == " << n_couplings << std::endl;
+            return;
         }
 
-        double chi2 = 0.;
-        unsigned short k = 0;
-        for (unsigned short i = 0; i < m_n_obs; i++) {
-            // C_inv is symmetric so we can save a bit in the inner loop
-            for (unsigned short j = 0; j <= i; j++, k++) {
-                double tmp = diff[i] * C_inv[k] * diff[j];
-                if (i != j) {
-                    // we need to add the contribution from the off-diagonals twice.
-                    tmp *= 2.;
+        // take first histo to set bin centers
+        TH1D* h = signalHists[0][0];
+        for (unsigned short i_bin = 0; i_bin < n_bins; i_bin++) {
+            m_binCenters[i_bin] = h->GetBinCenter(i_bin+1);
+        }
+
+        for (unsigned short i_obs = 0; i_obs < n_obs; i_obs++) {
+            for (unsigned short j_hel = 0; j_hel < 4; j_hel++) {
+                // convert signal histograms
+                TH1D* hist = signalHists[i_obs][j_hel];
+                // + 1 to skip underflow bin
+                BinVec_t signal_vec(hist->GetArray() + 1, n_bins);
+                // divide out sample luminosity!
+                signal_vec /= signalSampleLumi[j_hel];
+                m_signalHists[i_obs][j_hel] = signal_vec;
+
+
+                // convert templatePars
+                TemplMat_t& mat = m_templatePars[i_obs][j_hel];
+                // TemplMat_t mat{};
+                for (unsigned short k_cpl = 0; k_cpl < n_couplings; k_cpl++) {
+                    TH1D* hist = templatePars[i_obs][j_hel][k_cpl];
+                    BinVec_t vec(hist->GetArray() + 1, n_bins);
+                    mat.Place_in_row(vec, k_cpl, 0);
+                    // for (unsigned short l = 0; l < n_bins; l++) {
+                    //     mat[k_cpl][l] = vec[l];
+                    // }
                 }
-                chi2 += tmp;
+                // m_templatePars[i_obs][j_hel] = mat;
             }
         }
+        m_C.reserve(4);
+        for (unsigned short j_hel = 0; j_hel < 4; j_hel++) {
+            // Mat_t mat(C[j_hel], true);
+            Mat_t mat(C[j_hel], false);
+            mat /= signalSampleLumi[j_hel];
+            m_C.push_back(mat);
+        }
+        std::cout << "finished constructor" << std::endl;
+    }
+
+    Vec_t getExpectedSignal(double lumi, std::array<double, 4> helicity_weights,
+                            CouplingVec_t couplings, double norm_factor)
+        {
+            Vec_t res_v{};
+            // for each obs
+            for (unsigned short i_obs = 0; i_obs < n_obs; i_obs++) {
+                BinVec_t expected;
+                // for each helicity
+                for (unsigned short j_hel = 0; j_hel < 4; j_hel++) {
+                    // calculate relative changes for this obs and helicity
+                    BinVec_t relativeBinChanges = couplings * m_templatePars[i_obs][j_hel];
+                    relativeBinChanges += 1.;
+                    // element wise multiplication
+                    BinVec_t absoluteBinContent = relativeBinChanges * m_signalHists[i_obs][j_hel];
+                    // scale to correct lumi and pol
+                    double weight = lumi * helicity_weights[j_hel];
+                    expected += weight * absoluteBinContent;
+                }
+                // do the "integral" and apply signal norm factor
+                // std::cout << "expected: " << expected << " bin_centers: " << m_binCenters << std::endl;
+                double foo = ROOT::Math::Dot(expected, m_binCenters);
+                res_v[i_obs] = ROOT::Math::Dot(expected, m_binCenters) * norm_factor;
+                // std::cout << "foo: " << foo << " norm_factor: " << norm_factor << std::endl;
+            }
+            return res_v;
+        }
+
+    Vec_t getExpected(double lumi, std::array<double, 4> helicity_weights,
+                      CouplingVec_t couplings, std::vector<double>norm_factors)
+        {
+            Vec_t signal = this->getExpectedSignal(lumi, helicity_weights, couplings, norm_factors[0]);
+            // Vec_t background = this->getExpectedBackground(lumi, helicity_weights, couplings, norm_factors);
+
+            return signal; // + background;
+        }
+
+    double operator()(double* obs, double* pars) {
+        // TODO: all of this should probably be const...
+        double lumi = pars[0];
+        double beam_e_pol = pars[1];
+        double beam_p_pol = pars[2];
+        // implicitly ties n_obs to n_couplings, which makes sense for OO
+        // but I could also fit more couplings than obs if I want...
+        CouplingVec_t couplings(pars + 3, n_obs);
+        // TODO: only one so far, add more for backgrounds
+        std::vector<double> norm_factors(pars + 3 + n_obs, pars + 3 + n_obs + 1);
+
+        // TODO: store last beam pols and cache weights and matrix if fit is too slow
+        std::array<double, 4> helicity_weight;
+        for (unsigned short i = 0; i < 4; i++) {
+            helicity_weight[i] = 0.25 * (1.0 + beam_e_pol * m_process_e_pol[i]) * (1.0 + beam_p_pol * m_process_p_pol[i]);
+        }
+        // recalculate C_inv from current values of lumi and polarisation
+        // might kill the performance in the case that they are fixed...
+        Mat_t C_inv;
+        for (unsigned short i = 0; i < 4; i++) {
+            C_inv += helicity_weight[i] * m_C[i];
+        }
+        C_inv *= lumi;
+        std::cout << "C: " << C_inv << std::endl;
+        // TODO: figure out if fast is good enough
+        // looks like it but first debug the rest...
+        // C_inv.InvertFast();
+        C_inv.Invert();
+
+        Vec_t obs_v(obs, n_obs);
+        Vec_t exp_v = this->getExpected(lumi, helicity_weight, couplings, norm_factors);
+
+        Vec_t diff_v = obs_v - exp_v;
+
+        double chi2 = ROOT::Math::Similarity(diff_v, C_inv);
+        // std::cout << "chi2: " << chi2 << std::endl;
+        // std::cout << "obs_v: " << obs_v << std::endl;
+        // std::cout << "exp_v: " << exp_v << std::endl;
+        // std::cout << "diff_v: " << diff_v << std::endl;
+        std::cout << "C_inv: " << C_inv << std::endl;
+        return chi2;
+    }
+
+    // takes m_n_obs many observables
+    // and 1 (lumi) + 2 (beam pols) + m_n_couplings many parameters
+    // easier to call with cppyy for debugging
+    double operator()(std::vector<double> obs, std::vector<double> pars) {
+        return operator()(obs.data(), pars.data());
     }
 };

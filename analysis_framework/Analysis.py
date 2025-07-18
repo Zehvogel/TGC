@@ -153,6 +153,15 @@ class Analysis:
     def book_histogram_2D(self, name: str, column1: str, column2: str, config: tuple, categories: list[str]|None = None):
         self._histograms[name] = self.book_some_method("Histo2D", (config, column1, column2), categories)
 
+    def book_histogram_3D(self, name: str, config: tuple, columns: list[str],  categories: list[str]|None = None):
+        self._histograms[name] = self.book_some_method("Histo3D", (config, *columns), categories)
+
+    def book_histogram_ND(self, name: str, config: tuple, columns: list[str],  categories: list[str]|None = None):
+        self._histograms[name] = self.book_some_method("HistoND", (config, columns), categories)
+
+    # FIXME broken
+    def book_histogram_ND_sparse(self, name: str, config: tuple, columns: list[str],  categories: list[str]|None = None):
+        self._histograms[name] = self.book_some_method("Fill", (ROOT.THnSparseD(*config), columns), categories)
 
     def book_variations(self, name: str, categories: list[str]|None = None):
         res = {}
@@ -182,15 +191,18 @@ class Analysis:
 
     # TODO: extend to allow to select categories
     # TODO: reconsider if this is needed
-    def get_sum(self, name: str, int_lumi: float = 5000, e_pol: float = 0.0, p_pol: float = 0.0) -> float:
+    def get_sum(self, name: str, int_lumi: float = 5000, e_pol: float = 0.0, p_pol: float = 0.0, categories: list[str]|None = None) -> float:
         # ideally I could also make a functor that does this, but there is this
         # additional issue that histograms need to be cloned and numbers not etc.
         result = 0.
         sums = self._sums[name]
         for i, (category_name, dataframes) in enumerate(self._categories.items()):
+            if categories and category_name not in categories:
+                # skip
+                continue
             for k in dataframes:
                 _sum = sums[k].GetValue()
-                weight_key = k.removesuffix("_signal").removesuffix("_bkg")
+                weight_key = k#.removesuffix("_signal").removesuffix("_bkg")
                 weight = self._dataset.get_weight(weight_key, int_lumi, e_pol, p_pol)
                 result += _sum * weight
         return result
@@ -207,21 +219,20 @@ class Analysis:
         return _sum / count
 
 
-    def store_raw_histograms(self, variable_names: list[str], output_path: str):
+    def store_raw_histograms(self, variable_names: list[str], output_path: str, opening_option: str = "recreate"):
         """Stores the unscaled histograms into a ROOT file, together with the meta information on the original integrated luminosity and beam polarisation"""
-        with ROOT.TFile(f"{output_path}/raw_histograms.root", "recreate") as output_file:
+        with ROOT.TFile(f"{output_path}/raw_histograms.root", opening_option) as output_file:
             for category_name, dataframes in self._categories.items():
-                cat_dir = output_file.mkdir(category_name)
+                cat_dir = output_file.mkdir(category_name, "", True)
                 for k in dataframes:
-                    dir = cat_dir.mkdir(k)
+                    dir = cat_dir.mkdir(k, "", True)
                     # add meta information
-                    meta_dir = dir.mkdir("meta")
+                    meta_dir = dir.mkdir("meta", "", True)
                     meta_dir.cd()
                     # FIXME
                     # weight_key = k.removesuffix("_signal").removesuffix("_bkg")
                     weight_key = k
                     lumi, e_pol, p_pol = self._dataset.get_lumi_and_pol(weight_key)
-                    # FIXME: great now instead of a stupid error this even crashes the kernel!
                     lumi_par = ROOT.TParameter["float"]("lumi", lumi)
                     lumi_par.Write()
                     e_pol_par = ROOT.TParameter["float"]("e_pol", e_pol)
@@ -340,7 +351,7 @@ class Analysis:
                 reports = self._reports[k]
                 weight_key = k
                 # FIXME only do this step is needed!
-                weight_key  = weight_key.removesuffix("_signal").removesuffix("_bkg")
+                weight_key  = weight_key#.removesuffix("_signal").removesuffix("_bkg")
                 weight = self._dataset.get_weight(weight_key, int_lumi, e_pol, p_pol)
                 for i, cut_info in enumerate(reports):
                     # print(f"processing cutinfo for category: {category_name}, frame: {k}, cut_name: {cut_info.GetName()}, pass: {cut_info.GetPass()}")
