@@ -309,7 +309,7 @@ struct fit_fun2 {
             C_inv += helicity_weight[i] * m_C[i];
         }
         C_inv *= lumi;
-        std::cout << "C: " << C_inv << std::endl;
+        // std::cout << "C: " << C_inv << std::endl;
         // TODO: figure out if fast is good enough
         // looks like it but first debug the rest...
         // C_inv.InvertFast();
@@ -325,8 +325,17 @@ struct fit_fun2 {
         // std::cout << "obs_v: " << obs_v << std::endl;
         // std::cout << "exp_v: " << exp_v << std::endl;
         // std::cout << "diff_v: " << diff_v << std::endl;
-        std::cout << "C_inv: " << C_inv << std::endl;
+        // std::cout << "C_inv: " << C_inv << std::endl;
         return chi2;
+    }
+
+    // takes m_n_obs many observables
+    // and 1 (lumi) + 2 (beam pols) + m_n_couplings many parameters
+    // needed for ROOT::Math::IBaseFunctionMultiDim
+    double operator()(double* all) {
+        double* obs = all;
+        double* pars = all + n_obs;
+        return operator()(obs, pars);
     }
 
     // takes m_n_obs many observables
