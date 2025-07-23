@@ -312,8 +312,8 @@ struct fit_fun2 {
         // std::cout << "C: " << C_inv << std::endl;
         // TODO: figure out if fast is good enough
         // looks like it but first debug the rest...
-        // C_inv.InvertFast();
-        C_inv.Invert();
+        C_inv.InvertFast();
+        // C_inv.Invert();
 
         Vec_t obs_v(obs, n_obs);
         Vec_t exp_v = this->getExpected(lumi, helicity_weight, couplings, norm_factors);
