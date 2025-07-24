@@ -3,9 +3,11 @@ import ROOT
 import numpy as np
 from OO.whizard.model_parser import ModelParser
 import subprocess
-from alt_setup_creator import AltSetupHandler
+from alt_setup_creator_new import AltSetupHandler
 from itertools import combinations_with_replacement, product
 from math import sqrt
+from array import array
+from time import sleep
 
 def make_lvec_E(column: str, idx: str):
     return f"""
@@ -230,8 +232,9 @@ class WWAnalysis(Analysis):
             self.define_only_on(self._signal_categories, f"weight_{name}", f"mc_sqme_{name} / mc_sqme_nominal")
 
 
-    def define_optimal_observables(self, alt_handler: AltSetupHandler, only=None):
-        for name, var in alt_handler.get_named_variations_it(only):
+    def define_optimal_observables(self, names: str):
+        for name in names:
+            var = AltSetupHandler.get_var_from_name_1d(name)
             self.Define(f"O_{name}", f"{1/var} * (reco_sqme_12_nominal + reco_sqme_21_nominal - reco_sqme_12_{name} - reco_sqme_21_{name}) / (reco_sqme_12_nominal + reco_sqme_21_nominal)")
             self._define((f"mc_O_{name}", f"{1/var} * (mc_sqme_nominal - mc_sqme_{name}) / mc_sqme_nominal"), self._signal_categories)
 
@@ -313,7 +316,96 @@ class WWAnalysis(Analysis):
         self._template_pars[observable_name] = template_pars
 
 
-    def plot_template_bins(self, observable_name: str, plot_path: str = None):
+
+    def calculate_template_parametrisation_full(self, observable_name: str, alt_handler: AltSetupHandler):
+        template_name = f"tmpl_{observable_name}"
+        varied_histos = self._varied_histograms[template_name]
+        pars = alt_handler.get_pars()
+        n_pars = len(pars)
+
+        # urgh no point in doing this as ROOT sorts the parameters internally anyway back into the same order as with the other definition.......
+        terms = []
+        for k, (par1, par2) in enumerate(combinations_with_replacement(["1"] + alt_handler.get_pars(), r=2)):
+            # print(k, par1, par2)
+            if k == 0:
+                continue
+            if par1 == "1":
+                i = pars.index(par2)
+                # terms.append(f"x[{i}] * [par_{i}]")
+                terms.append(f"x[{i}] * [p_{k-1}]")
+            else:
+                i = pars.index(par1)
+                j = pars.index(par2)
+                # terms.append(f"x[{i}] * x[{j}] * [par_{i}_{j}]")
+                terms.append(f"x[{i}] * x[{j}] * [p_{k-1}]")
+        parametrisation = " + ".join(terms)
+
+        # parametrisation = ""
+        # for i in range(n_pars):
+        #     if i > 0:
+        #         parametrisation += " + "
+        #     parametrisation += f"x[{i}] * [par_{i}]"
+        #     for j in range(n_pars):
+        #         if j < i:
+        #             continue
+        #         parametrisation += f" + x[{i}] * x[{j}] * [par_{i}_{j}]"
+        print(parametrisation)
+        # un-documented root feature, set min > max and more than 1D is fine...
+        # otherwise there is an error and the zombie bit gets set
+        f = ROOT.TF1("f", parametrisation, 1, 0)
+        fit_fun = ROOT.Math.WrappedMultiTF1(f, f.GetNdim())
+        fitter = ROOT.Fit.Fitter()
+        fitter.SetFunction(fit_fun, False)
+        template_pars = {}
+        for process_name, v_histos in varied_histos.items():
+            nominal_histo = v_histos["nominal"]
+            fit_data = []
+            n_bins = nominal_histo.GetNbinsX()
+            n_variations = alt_handler.get_n_variations()
+            for i in range(n_bins):
+                fd = ROOT.Fit.BinData(n_variations +
+                1, n_pars, ROOT.Fit.BinData.kNoError)
+                fd.Add(array("d", [0.]*n_pars), 1.)
+                fit_data.append(fd)
+            for i, (var_name, vars) in enumerate(alt_handler.get_variations_nd()):
+            # for each variation get the histogram
+                h_var = v_histos[f"weight:{var_name}"] / nominal_histo
+                for b in range(n_bins):
+                    bc = h_var[b]
+                    fit_data[b].Add(array("d", vars), bc)
+            fit_results = []
+            for b in range(n_bins):
+                fit_worked = fitter.Fit(fit_data[b])
+                if not fit_worked:
+                    print("ERROR fit returned false!!!")
+                    # print(f"fit res: ")
+                fitter.Result().Print(ROOT.std.cout)
+                fit_result = fitter.Result()
+                fit_results.append(list(fit_result.Parameters()))
+            process_par_histos = {}
+            print(fit_results)
+            for i, (par1, par2) in enumerate(combinations_with_replacement(["1"] + alt_handler.get_pars(), r=2)):
+                    # print(i, par1, par2)
+                    if i == 0:
+                        # nothing to do for no variation
+                        continue
+                    var_idx = i - 1
+                    par_histo = nominal_histo.Clone()
+                    for b in range(n_bins):
+                        bc = fit_results[b][var_idx]
+                        par_histo.SetBinContent(b+1, bc)
+                    name = par2 if par1 == "1" else f"{par1}_{par2}"
+                    par_histo.SetTitle(name)
+                    process_par_histos[name] = par_histo
+            template_pars[process_name] = process_par_histos
+                    # fit
+                    # get parameters from fit result
+                    # put the parameters directly into some kind of matrix?
+                    # or histograms so that we can view them in the file?
+        self._template_pars[observable_name] = template_pars
+
+
+    def plot_template_bins(self, observable_name: str, plot_path: str|None = None):
         canvases = {}
         template_graphs = self._template_graphs[observable_name]
         for process_name, par_graphs in template_graphs.items():
