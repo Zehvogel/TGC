@@ -42,6 +42,7 @@ class WWAnalysis(Analysis):
     _template_funs = {}
     _template_pars = {}
     _oo_matrix = {}
+    _oo_matrix_var = {}
 
     def __init__(self, dataset):
         self.truth_defined = False
@@ -264,6 +265,11 @@ class WWAnalysis(Analysis):
         """)
         f = ROOT.rvec_reducer_d()
         self._oo_matrix = self.book_some_method("Reduce", (f, "oo_matrix", res), categories=self._signal_categories)
+        # also make linear parametrisations
+        for o in observables:
+            var_name = o.removeprefix("O_")
+            self._define((f"oo_matrix_{var_name}", f"oo_matrix * weight_{var_name}"), self._signal_categories)
+            self._oo_matrix_var[var_name] = self.book_some_method("Reduce", (f, f"oo_matrix_{var_name}", res), categories=self._signal_categories)
 
 
     def calculate_template_parametrisation(self, observable_name: str, alt_handler: AltSetupHandler):
@@ -453,3 +459,12 @@ class WWAnalysis(Analysis):
                 # mat.Write(name)
                 mat = ROOT.Math.SVector[f"double, {oo_mat.size()}"](oo_mat.begin(), oo_mat.end())
                 oo_mat_dir.WriteObject(mat, name)
+            oo_mat_var_dir = output_file.mkdir("oo_matrix_var")
+            for var_name, vars in self._oo_matrix_var.items():
+                var_dir = oo_mat_var_dir.mkdir(var_name)
+                var_dir.cd()
+                for mat_name, oo_mat in vars.items():
+                    mat = ROOT.Math.SVector[f"double, {oo_mat.size()}"](oo_mat.begin(), oo_mat.end())
+                    var_dir.WriteObject(mat, mat_name)
+
+

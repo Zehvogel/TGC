@@ -4,9 +4,17 @@ import scipy as sc
 from array import array
 
 
+# def make_THnSparse_like(h):
+    # axes = list(h.GetListOfAxes())
+    # return ROOT.THnSparseD("", "", axes)
+
+
 def make_THnSparse_like(h):
     axes = list(h.GetListOfAxes())
-    return ROOT.THnSparseD("", "", axes)
+    nbins = array("i", [a.GetNbins() for a in axes])
+    xmin = array("d", [a.GetXmin() for a in axes])
+    xmax = array("d", [a.GetXmax() for a in axes])
+    return ROOT.THnSparseD("", "",len(axes), nbins, xmin, xmax)
 
 
 def make_observed_histogram(histos: dict, meta: dict, run_config: dict[str, float]):
