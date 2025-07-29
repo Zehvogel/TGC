@@ -153,3 +153,5 @@ def make_new_asimov_observables(h, seed: int):
     h_1Ds = make_1D_projections(h_asimov)
     return make_observables(h_1Ds)
 
+def pol_idx(e_pol: float, p_pol: float):
+    return int(((e_pol + 1) * 2 + (p_pol + 1))/2)

@@ -5,6 +5,7 @@
 #include <Math/SMatrix.h>
 #include <Math/SVector.h>
 #include <Math/MatrixFunctions.h>
+#include <ranges>
 
 // struct fit_fun {
 //     unsigned short m_n_obs;
@@ -175,6 +176,7 @@ struct fit_fun2 {
 
     // XXX: needs to be scaled to 1 fb^-1
     std::array<std::array<BinVec_t, 4>, n_obs> m_signalHists;
+    std::vector<std::array<std::array<BinVec_t, 4>, n_obs>> m_backgroundHists;
 
     // pols: LL, LR, RL, RR
     const double m_process_e_pol[4] = {-1., -1., 1., 1.,};
@@ -250,6 +252,42 @@ struct fit_fun2 {
         std::cout << "finished constructor" << std::endl;
     }
 
+    fit_fun2(
+        std::vector<std::vector<TH1D*>> signalHists,
+        std::vector<double> signalSampleLumi,
+        std::vector<MatAsVec_t> C,
+        std::vector<std::vector<std::vector<TH1D*>>> templatePars,
+        std::vector<std::vector<std::vector<TH1D*>>> backgroundHists
+    ) : fit_fun2(signalHists, signalSampleLumi, C, templatePars)
+    {
+        // parse only the background histograms here and do the rest in the original constructor
+        for (const auto& bkg : backgroundHists) {
+            // check that we have an entry per obs
+            if (bkg.size() != n_obs) {
+                std::cout << "ERROR: provided bkg.size() == " << bkg.size() << " but n_obs == " << n_obs << std::endl;
+                return;
+            }
+            std::array<std::array<BinVec_t, 4>, n_obs> tmp;
+            for (unsigned short i_obs = 0; i_obs < n_obs; i_obs++) {
+                // check that we have an entry per helicity
+                const auto& obs = bkg[i_obs];
+                if (obs.size() != 4) {
+                    std::cout << "ERROR: provided obs.size() == " << obs.size() << " but should be 4" << std::endl;
+                    return;
+                }
+                for (unsigned short j_hel; j_hel < 4; j_hel++) {
+                    // convert histograms
+                    TH1D* hist = bkg[i_obs][j_hel];
+                    // + 1 to skip underflow bin
+                    BinVec_t bkg_vec(hist->GetArray() + 1, n_bins);
+                    tmp[i_obs][j_hel] = bkg_vec;
+                }
+            }
+            m_backgroundHists.push_back(std::move(tmp));
+        }
+    }
+
+
     Vec_t getExpectedSignal(double lumi, std::array<double, 4> helicity_weights,
                             CouplingVec_t couplings, double norm_factor)
         {
@@ -277,13 +315,48 @@ struct fit_fun2 {
             return res_v;
         }
 
+
+    Vec_t getExpectedBackground(double lumi, std::array<double, 4> helicity_weights,
+                                std::vector<double> norm_factors)
+        {
+            Vec_t res_v{};
+            if (norm_factors.size() != m_backgroundHists.size()) {
+                std::cout << "ERROR incorrect number of background norm factors given: " << norm_factors.size() << " (needed: " << m_backgroundHists.size() << ")" << std::endl;
+                return res_v;
+            }
+            // for each bkg
+            // for (const auto& [bkg, norm_factor] : std::views::zip(m_backgroundHists, norm_factors)) {
+            for (unsigned short k_bkg = 0; k_bkg < m_backgroundHists.size(); k_bkg++) {
+                const auto& bkg = m_backgroundHists[k_bkg];
+                double norm_factor = norm_factors[k_bkg];
+                // for each obs
+                for (unsigned short i_obs = 0; i_obs < n_obs; i_obs++) {
+                    BinVec_t expected;
+                    // for each helicity
+                    for (unsigned short j_hel = 0; j_hel < 4; j_hel++) {
+                        // scale to correct lumi and pol
+                        double weight = lumi * helicity_weights[j_hel];
+                        expected += weight * bkg[i_obs][j_hel];
+                    }
+                    // do the "integral" and apply norm factor
+                    double foo = ROOT::Math::Dot(expected, m_binCenters);
+                    res_v[i_obs] += ROOT::Math::Dot(expected, m_binCenters) * norm_factor;
+                }
+            }
+            return res_v;
+        }
+
     Vec_t getExpected(double lumi, std::array<double, 4> helicity_weights,
                       CouplingVec_t couplings, std::vector<double>norm_factors)
         {
             Vec_t signal = this->getExpectedSignal(lumi, helicity_weights, couplings, norm_factors[0]);
-            // Vec_t background = this->getExpectedBackground(lumi, helicity_weights, couplings, norm_factors);
 
-            return signal; // + background;
+            if (m_backgroundHists.size() > 0) {
+                Vec_t background = this->getExpectedBackground(lumi, helicity_weights, norm_factors);
+                signal += background;
+            }
+
+            return signal;
         }
 
     double operator()(double* obs, double* pars) {
