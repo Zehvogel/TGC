@@ -224,6 +224,7 @@ struct fit_fun2 {
                 // + 1 to skip underflow bin
                 BinVec_t signal_vec(hist->GetArray() + 1, n_bins);
                 // divide out sample luminosity!
+                // FIXME: this should really be done externally!!!
                 signal_vec /= signalSampleLumi[j_hel];
                 m_signalHists[i_obs][j_hel] = signal_vec;
 
