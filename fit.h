@@ -573,8 +573,8 @@ struct expect_fun {
     double operator()(double* pars) {
         // TODO: all of this should probably be const...
         double lumi = m_lumi * pars[0];
-        double beam_e_pol = m_e_pol * pars[1];
-        double beam_p_pol = m_p_pol * pars[2];
+        double beam_e_pol = m_e_pol + pars[1];
+        double beam_p_pol = m_p_pol + pars[2];
         CouplingVec_t couplings(pars + 3, n_couplings);
         // TODO: only one so far, add more for backgrounds
         std::vector<double> norm_factors(pars + 3 + n_couplings, pars + 3 + n_couplings + 1);
