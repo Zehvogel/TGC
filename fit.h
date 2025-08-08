@@ -445,8 +445,8 @@ struct expect_fun {
     expect_fun(
         std::vector<TH1D*> signalHists,
         std::vector<std::vector<TH1D*>> templatePars,
-        double lumi, double e_pol, double p_pol
-    ) : m_lumi(lumi), m_e_pol(e_pol), m_p_pol(p_pol)
+        /*double lumi, double e_pol, double p_pol*/
+    ) /*: m_lumi(lumi), m_e_pol(e_pol), m_p_pol(p_pol)*/
     {
         std::cout << "start constructor" << std::endl;
         // sanity checks of the vectors
@@ -486,9 +486,9 @@ struct expect_fun {
     expect_fun(
         std::vector<TH1D*> signalHists,
         std::vector<std::vector<TH1D*>> templatePars,
-        double lumi, double e_pol, double p_pol,
+        /*double lumi, double e_pol, double p_pol,*/
         std::vector<std::vector<TH1D*>> backgroundHists
-    ) : expect_fun(signalHists, templatePars, lumi, e_pol, p_pol)
+    ) : expect_fun(signalHists, templatePars/*, lumi, e_pol, p_pol*/)
     {
         // parse only the background histograms here and do the rest in the original constructor
         for (const auto& bkg : backgroundHists) {
@@ -572,9 +572,9 @@ struct expect_fun {
 
     double operator()(double* pars) {
         // TODO: all of this should probably be const...
-        double lumi = m_lumi * pars[0];
-        double beam_e_pol = m_e_pol + pars[1];
-        double beam_p_pol = m_p_pol + pars[2];
+        double lumi = pars[0];
+        double beam_e_pol = pars[1];
+        double beam_p_pol = pars[2];
         CouplingVec_t couplings(pars + 3, n_couplings);
         // TODO: only one so far, add more for backgrounds
         std::vector<double> norm_factors(pars + 3 + n_couplings, pars + 3 + n_couplings + 1);
