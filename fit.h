@@ -438,13 +438,13 @@ struct expect_fun {
     const double m_process_e_pol[4] = {-1., -1., 1., 1.,};
     const double m_process_p_pol[4] = {-1., 1., -1., 1.,};
 
-    const double m_lumi;
-    const double m_e_pol;
-    const double m_p_pol;
+    // const double m_lumi;
+    // const double m_e_pol;
+    // const double m_p_pol;
 
     expect_fun(
         std::vector<TH1D*> signalHists,
-        std::vector<std::vector<TH1D*>> templatePars,
+        std::vector<std::vector<TH1D*>> templatePars
         /*double lumi, double e_pol, double p_pol*/
     ) /*: m_lumi(lumi), m_e_pol(e_pol), m_p_pol(p_pol)*/
     {

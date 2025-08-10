@@ -124,67 +124,35 @@ class FitHandler:
         return [list(p.values()) for p in tmp_pars.values()]
 
 
-    def build_model(self, run_configs: list(dict[str, float])):
-
-        # TODO: separate run components and build roo simultaneous by hand
-
-        # build all the RooFit stuff
-        # first build initial obs and the covariance matrix according to the run config
-        obs_initial = self.get_initial_observables(run_config)
-        cov_matrix = self.get_obs_cov_matrix(run_config)
-
-        # define observables
-        obs_pars = []
-        for i, o in enumerate(obs_initial):
-            name = self.obs_names[i]
-            sigma = sqrt(cov_matrix[i][i])
-            min_o = o - 3 * sigma
-            max_o = o + 3 * sigma
-            ob = ROOT.RooRealVar(name, name, min_o, max_o)
-            obs_pars.append(ob)
-
-        # self.obs_pars = obs_pars
-
-        # define nuisance parameters for run parameters
-        lumi_par = ROOT.RooRealVar("lumi", "lumi", run_config["lumi"], 0.9 * run_config["lumi"], 1.1 * run_config["lumi"])
-        lumi_par.setConstant()
-        e_pol_par = ROOT.RooRealVar("e_pol", "e_pol", run_config["e_pol"], -1., 1.)
-        e_pol_par.setConstant()
-        p_pol_par = ROOT.RooRealVar("p_pol", "p_pol", run_config["p_pol"], -1., 1.)
-        p_pol_par.setConstant()
-
+    def build_model(self, run_configs: list[dict[str, float]]):
+        self.ws = ROOT.RooWorkspace("ws")
+        # define here all common parameters
+        # TGCs + norm factors + shared nuisance parameters for lumi and pol
+        
         # define coupling parameters
         coupling_pars = []
         for name, value in self.parameters.items():
             # that should be tight enough...
             cpl = ROOT.RooRealVar(name, name, value, -0.5, 0.5)
             coupling_pars.append(cpl)
-        # self.coupling_pars = coupling_pars
-
-        # define nuisance parameters
-        # TODO rename because these are normfactors?
-        nuisance_pars = []
+        self.coupling_pars = coupling_pars
+        
+        norm_factors = []
         # signal only so far
-        nu_par = ROOT.RooRealVar("mu_signal", "mu_signal", 1., 0.9, 1.1)
-        nu_par.setConstant()
-        nuisance_pars.append(nu_par)
-        all_pars = [lumi_par, e_pol_par, p_pol_par] + coupling_pars + nuisance_pars
-        # self.obs_and_pars = obs_pars + all_pars
+        mu_par = ROOT.RooRealVar("mu_signal", "mu_signal", 1., 0.9, 1.1)
+        mu_par.setConstant()
+        norm_factors.append(mu_par)
+        self.norm_factors = norm_factors
 
-        self.expected_funs = []
-        bound_expected_funs = []
-        for i, name in enumerate(self.obs_names):
-            fun, func = self.make_expected_fun(name, run_config)
-            self.expected_funs.append(fun)
-            self.expected_funs.append(func)
-            bound_fun = ROOT.RooFit.bindFunction(f"expectation_{name}", func, all_pars)
-            # self.expected_funs.append(bound_fun)
-            bound_expected_funs.append(bound_fun)
-
-        print("hello")
-        gauss = ROOT.RooMultiVarGaussian("multi_gauss", "multi_gauss", obs_pars, bound_expected_funs, cov_matrix)
-        # self.gauss = gauss
-
+        run_models = []
+        for i, run_config in enumerate(run_configs):
+            print(run_config)
+            # hand over pars here or take them from fields as this is super implementation dependent anyway
+            run_models.append(self.build_run_model(run_config, i))
+        # if more than one run 
+            # create sim pdf and one category per run conf
+                # add run models to sim pdf
+        # build constraint pdfs for nuisance parameters and multiply them with the sim pdf
         # global obs for pol
         # g_obs = []
         # e_pol_glob = ROOT.RooRealVar("e_pol_glob", "e_pol_glob", run_config["e_pol"], -1., 1.)
@@ -199,13 +167,60 @@ class FitHandler:
         # self.constraints = constraints
 
         # model = ROOT.RooProdPdf("model", "model", [gauss] + constraints)
-        model = gauss
+        model = run_models[0]
+        # self.ws.Import(model, ROOT.RooFit.RecycleConflictNodes())
+        # self.ws.Import(model)
 
-        ws = ROOT.RooWorkspace("ws")
-        ws.Import(model)
         # TODO: model config
 
-        return ws
+        return self.ws
+
+
+    def build_run_model(self, run_config: dict[str, float], idx: int):
+        # first build initial obs and the covariance matrix according to the run config
+        obs_initial = self.get_initial_observables(run_config)
+        cov_matrix = self.get_obs_cov_matrix(run_config)
+
+        # define observables
+        obs_pars = []
+        for i, o in enumerate(obs_initial):
+            name = self.obs_names[i]
+            sigma = sqrt(cov_matrix[i][i])
+            min_o = o - 3 * sigma
+            max_o = o + 3 * sigma
+            ob = ROOT.RooRealVar(name, name, min_o, max_o)
+            obs_pars.append(ob)
+
+        # TODO: these will need a "run name" postfix or something similar...
+        # TODO: apply global nuisance parameters to these
+        # run parameters
+        lumi_par = ROOT.RooRealVar(f"lumi_{idx}", "lumi", run_config["lumi"], 0.9 * run_config["lumi"], 1.1 * run_config["lumi"])
+        lumi_par.setConstant()
+        e_pol_par = ROOT.RooRealVar(f"e_pol_{idx}", "e_pol", run_config["e_pol"], -1., 1.)
+        e_pol_par.setConstant()
+        p_pol_par = ROOT.RooRealVar(f"p_pol_{idx}", "p_pol", run_config["p_pol"], -1., 1.)
+        p_pol_par.setConstant()
+
+        all_pars = [lumi_par, e_pol_par, p_pol_par] + self.coupling_pars + self.norm_factors
+
+        self.expected_funs = []
+        bound_expected_funs = []
+        for i, name in enumerate(self.obs_names):
+            fun, func = self.make_expected_fun(name)
+            self.expected_funs.append(fun)
+            self.expected_funs.append(func)
+            bound_fun = ROOT.RooFit.bindFunction(f"expectation_{name}_{idx}", func, all_pars)
+            # self.expected_funs.append(bound_fun)
+            bound_expected_funs.append(bound_fun)
+
+        print("hello")
+        model = ROOT.RooMultiVarGaussian(f"multi_gauss_{idx}", "multi_gauss", obs_pars, bound_expected_funs, cov_matrix)
+
+        # something will have to be imported into the workspace here but I might need to be careful
+        # to not have multiple clones of the shared parameters...
+        self.ws.Import(model)
+        
+        return model
 
 
     def get_obs_cov_matrix(self, run_config):

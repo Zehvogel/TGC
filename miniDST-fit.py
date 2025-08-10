@@ -20,6 +20,8 @@ run = {
 }
 
 # https://arxiv.org/pdf/1506.07830
+# However, https://arxiv.org/pdf/2503.19983 cites the above but assigns 0.45 to both mixed pols
+# LCVision scenario uses 3 ab_inv instead of 2
 ilc_250_h20_lumi = 2000
 ilc_250_h20 = [
     {
@@ -91,12 +93,133 @@ fit_handler = FitHandler(input_path, conf)
 # In[ ]:
 
 
-model = fit_handler.build_model(run)
+ws = fit_handler.build_model([run])
+# coupling_pars = fit_handler.coupling_pars
+coupling_pars = [ws.var(name) for name in conf["parameters"]]
+obs_pars = [ws.var(name) for name in conf["obs_names"]]
 
 
 # In[ ]:
 
 
-# model.fitTo(ds)
-# model.getVal()
-model.Print("t")
+ws.Print("t")
+
+
+# In[ ]:
+
+
+model = ws.pdf("multi_gauss")
+
+
+# In[ ]:
+
+
+ds = ROOT.RooStats.AsymptoticCalculator.GenerateAsimovData(model, obs_pars)
+ds.Print("v")
+
+
+# In[ ]:
+
+
+fit_res = model.fitTo(ds, Save=True)
+
+
+# In[ ]:
+
+
+fit_res.covarianceMatrix().Print()
+
+
+# In[ ]:
+
+
+nll = model.createNLL(ds, EvalBackend="cpu")
+
+
+# In[ ]:
+
+
+nll_minimizer = ROOT.RooMinimizer(nll)
+
+
+# In[ ]:
+
+
+get_ipython().run_line_magic('time', '')
+nll_minimizer.migrad()
+
+
+# In[ ]:
+
+
+get_ipython().run_line_magic('time', '')
+# nll_minimizer.hesse()
+# nll_minimizer.minos(coupling_pars)
+
+
+# In[ ]:
+
+
+# nll.Print("t")
+
+
+# In[ ]:
+
+
+pll0 = nll.createProfile({coupling_pars[0]})
+pll1 = nll.createProfile({coupling_pars[1]})
+pll2 = nll.createProfile({coupling_pars[2]})
+
+
+# In[ ]:
+
+
+frame0 = coupling_pars[0].frame(Range=(-0.004, 0.004))
+frame1 = coupling_pars[1].frame(Range=(-0.004, 0.004))
+frame2 = coupling_pars[2].frame(Range=(-0.004, 0.004))
+nll.plotOn(frame0, ShiftToZero=True)
+nll.plotOn(frame1, ShiftToZero=True)
+nll.plotOn(frame2, ShiftToZero=True)
+
+
+# In[ ]:
+
+
+pll0.plotOn(frame0, LineColor="r")
+pll1.plotOn(frame1, LineColor="r")
+pll2.plotOn(frame2, LineColor="r")
+
+
+# In[ ]:
+
+
+c0 = ROOT.TCanvas()
+frame0.SetMinimum(0)
+frame0.SetMaximum(4)
+frame0.Draw()
+c0.Draw()
+# c0.SaveAs("plots/fit/ll_pll.pdf(")
+# c0.SaveAs("plots/fit/ll_pll_g1z.pdf")
+
+c1 = ROOT.TCanvas()
+frame1.SetMinimum(0)
+frame1.SetMaximum(4)
+frame1.Draw()
+c1.Draw()
+# c1.SaveAs("plots/fit/ll_pll.pdf")
+# c1.SaveAs("plots/fit/ll_pll_ka.pdf")
+
+c2 = ROOT.TCanvas()
+frame2.SetMinimum(0)
+frame2.SetMaximum(4)
+frame2.Draw()
+c2.Draw()
+# c2.SaveAs("plots/fit/ll_pll.pdf)")
+# c2.SaveAs("plots/fit/ll_pll_la.pdf")
+
+
+# In[ ]:
+
+
+
+
