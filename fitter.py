@@ -124,11 +124,8 @@ class FitHandler:
         return [list(p.values()) for p in tmp_pars.values()]
 
 
-    def build_model(self, run_configs: list[dict[str, float]]):
-        self.expected_funs = []
-        self.ws = ROOT.RooWorkspace("ws")
+    def build_model(self, total_lumi: float, hel_configs: list[dict[str, float]]):
         # define here all common parameters
-        # TGCs + norm factors + shared nuisance parameters for lumi and pol
 
         # define coupling parameters
         coupling_pars = []
@@ -137,6 +134,9 @@ class FitHandler:
             cpl = ROOT.RooRealVar(name, name, value, -0.5, 0.5)
             coupling_pars.append(cpl)
         self.coupling_pars = coupling_pars
+
+        # lumi (and later pol)
+        total_lumi_par = ROOT.RooRealVar("total_lumi", "total_lumi", total_lumi, 0.9 * total_lumi, 1.1*total_lumi)
 
         norm_factors = []
         # signal only so far
@@ -148,10 +148,11 @@ class FitHandler:
         run_models = []
         # place to keep all the RooFit stuff alive until the ws import is done
         local_par_cache = []
-        for i, run_config in enumerate(run_configs):
+        self.expected_funs = []
+        for i, run_config in enumerate(hel_configs):
             print(run_config)
             # hand over pars here or take them from fields as this is super implementation dependent anyway
-            model, local_pars = self.build_run_model(run_config, i)
+            model, local_pars = self.build_hel_model(total_lumi_par, run_config, i)
             run_models.append(model)
             local_par_cache.append(local_pars)
 
@@ -163,8 +164,6 @@ class FitHandler:
             model = sim_pdf
         else:
             model = run_models[0]
-
-        print(local_par_cache)
 
         # build constraint pdfs for nuisance parameters and multiply them with the sim pdf
         # global obs for pol
@@ -182,6 +181,7 @@ class FitHandler:
 
         # model = ROOT.RooProdPdf("model", "model", [gauss] + constraints)
         # self.ws.Import(model, ROOT.RooFit.RecycleConflictNodes())
+        self.ws = ROOT.RooWorkspace("ws")
         self.ws.Import(model)
 
         # TODO: model config
@@ -189,10 +189,11 @@ class FitHandler:
         return self.ws
 
 
-    def build_run_model(self, run_config: dict[str, float], idx: int):
+    def build_hel_model(self, total_lumi_par, hel_config: dict[str, float], idx: int):
         # first build initial obs and the covariance matrix according to the run config
-        obs_initial = self.get_initial_observables(run_config)
-        cov_matrix = self.get_obs_cov_matrix(run_config)
+        # TODO, do we pass total lumi explicitly? and as float are the RooRealVar which we need anyway further down?
+        obs_initial = self.get_initial_observables(total_lumi_par.getVal(), hel_config)
+        cov_matrix = self.get_obs_cov_matrix(total_lumi_par.getVal(), hel_config)
 
         # define observables
         obs_pars = []
@@ -206,11 +207,11 @@ class FitHandler:
 
         # TODO: apply global nuisance parameters to these
         # run parameters
-        lumi_par = ROOT.RooRealVar(f"lumi_{idx}", "lumi", run_config["lumi"], 0.9 * run_config["lumi"], 1.1 * run_config["lumi"])
-        lumi_par.setConstant()
-        e_pol_par = ROOT.RooRealVar(f"e_pol_{idx}", "e_pol", run_config["e_pol"], -1., 1.)
+        lumi_frac = ROOT.RooFit.RooConst(hel_config["lumi_frac"])
+        lumi_par = ROOT.RooProduct(f"lumi_{idx}", "lumi", lumi_frac, total_lumi_par)
+        e_pol_par = ROOT.RooRealVar(f"e_pol_{idx}", "e_pol", hel_config["e_pol"], -1., 1.)
         e_pol_par.setConstant()
-        p_pol_par = ROOT.RooRealVar(f"p_pol_{idx}", "p_pol", run_config["p_pol"], -1., 1.)
+        p_pol_par = ROOT.RooRealVar(f"p_pol_{idx}", "p_pol", hel_config["p_pol"], -1., 1.)
         p_pol_par.setConstant()
 
         run_pars = [lumi_par, e_pol_par, p_pol_par]
@@ -233,20 +234,20 @@ class FitHandler:
         # to not have multiple clones of the shared parameters...
         # self.ws.Import(model)
 
-        local_pars = obs_pars + run_pars + bound_expected_funs
+        local_pars = obs_pars + run_pars + bound_expected_funs + [lumi_frac]
 
         return model, local_pars
 
 
-    def get_obs_cov_matrix(self, run_config):
+    def get_obs_cov_matrix(self, total_lumi: float, hel_config: dict[str, float]):
         n_obs = len(self.obs_names)
         sum_mat = ROOT.Math.SVector[f"double, {int(n_obs * (n_obs + 1) / 2)}"]()
         for i, mat in enumerate(self._oo_matrices.values()):
             e_pol = self.process_e_pol[i]
             p_pol = self.process_p_pol[i]
-            pol_weight = 0.25 * (1.0 + run_config["e_pol"] * e_pol) * (1.0 + run_config["p_pol"] * p_pol)
+            pol_weight = 0.25 * (1.0 + hel_config["e_pol"] * e_pol) * (1.0 + hel_config["p_pol"] * p_pol)
             # just need to multiply by lumi as they are already normalised
-            weight = run_config["lumi"] * pol_weight
+            weight = hel_config["lumi_frac"] * total_lumi * pol_weight
             mat *= weight
             sum_mat += mat
         # first build smatrix, then convert it to tmatrix...
@@ -258,15 +259,15 @@ class FitHandler:
         return tmat
 
 
-    def get_initial_observables(self, run_config: dict[str, float]):
+    def get_initial_observables(self, total_lumi: float, hel_config: dict[str, float]):
         # TODO background
-        obs_hist = FitHandler.make_observed_histogram_fast(self._signal_histograms_nd, self._signal_meta, run_config)
+        obs_hist = FitHandler.make_observed_histogram_fast(self._signal_histograms_nd, self._signal_meta, total_lumi, hel_config)
         h_1d = FitHandler.make_1D_projections(obs_hist)
         return FitHandler.make_observables(h_1d)
 
 
     @staticmethod
-    def make_observed_histogram_fast(histos: dict, meta: dict, run_config: dict[str, float]):
+    def make_observed_histogram_fast(histos: dict, meta: dict, total_lumi: float, hel_config: dict[str, float]):
         """Merges histograms for 4 helicities into one according to a run_config containing lumi and beam pols"""
         # get axes from first histogram
         example_hist = list(histos.values())[0]
@@ -274,9 +275,9 @@ class FitHandler:
         res = FitHandler.make_THn_like(example_hist)
         for name, h in histos.items():
             m = meta[name]
-            pol_weight = 0.25 * (1.0 + run_config["e_pol"] * m["e_pol"].GetVal()) * (1.0 + run_config["p_pol"] * m["p_pol"].GetVal())
+            pol_weight = 0.25 * (1.0 + hel_config["e_pol"] * m["e_pol"].GetVal()) * (1.0 + hel_config["p_pol"] * m["p_pol"].GetVal())
             # just need to multiply by lumi as they are already normalised
-            weight = run_config["lumi"] * pol_weight
+            weight = hel_config["lumi_frac"] * total_lumi * pol_weight
             res.Add(h, weight)
         return res
 
