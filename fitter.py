@@ -125,10 +125,11 @@ class FitHandler:
 
 
     def build_model(self, run_configs: list[dict[str, float]]):
+        self.expected_funs = []
         self.ws = ROOT.RooWorkspace("ws")
         # define here all common parameters
         # TGCs + norm factors + shared nuisance parameters for lumi and pol
-        
+
         # define coupling parameters
         coupling_pars = []
         for name, value in self.parameters.items():
@@ -136,7 +137,7 @@ class FitHandler:
             cpl = ROOT.RooRealVar(name, name, value, -0.5, 0.5)
             coupling_pars.append(cpl)
         self.coupling_pars = coupling_pars
-        
+
         norm_factors = []
         # signal only so far
         mu_par = ROOT.RooRealVar("mu_signal", "mu_signal", 1., 0.9, 1.1)
@@ -145,13 +146,26 @@ class FitHandler:
         self.norm_factors = norm_factors
 
         run_models = []
+        # place to keep all the RooFit stuff alive until the ws import is done
+        local_par_cache = []
         for i, run_config in enumerate(run_configs):
             print(run_config)
             # hand over pars here or take them from fields as this is super implementation dependent anyway
-            run_models.append(self.build_run_model(run_config, i))
-        # if more than one run 
+            model, local_pars = self.build_run_model(run_config, i)
+            run_models.append(model)
+            local_par_cache.append(local_pars)
+
+        if len(run_models) > 1:
             # create sim pdf and one category per run conf
-                # add run models to sim pdf
+            run_categories = ROOT.RooCategory("runs", "Run configurations", {f"run_{i}": i for i in range(len(run_models))})
+            pdf_map = {f"run_{i}": model for i, model in enumerate(run_models)}
+            sim_pdf = ROOT.RooSimultaneous("sim_pdf", "sim_pdf", pdf_map, run_categories)
+            model = sim_pdf
+        else:
+            model = run_models[0]
+
+        print(local_par_cache)
+
         # build constraint pdfs for nuisance parameters and multiply them with the sim pdf
         # global obs for pol
         # g_obs = []
@@ -167,9 +181,8 @@ class FitHandler:
         # self.constraints = constraints
 
         # model = ROOT.RooProdPdf("model", "model", [gauss] + constraints)
-        model = run_models[0]
         # self.ws.Import(model, ROOT.RooFit.RecycleConflictNodes())
-        # self.ws.Import(model)
+        self.ws.Import(model)
 
         # TODO: model config
 
@@ -188,10 +201,9 @@ class FitHandler:
             sigma = sqrt(cov_matrix[i][i])
             min_o = o - 3 * sigma
             max_o = o + 3 * sigma
-            ob = ROOT.RooRealVar(name, name, min_o, max_o)
+            ob = ROOT.RooRealVar(f"{name}_{idx}", f"{name}_{idx}", min_o, max_o)
             obs_pars.append(ob)
 
-        # TODO: these will need a "run name" postfix or something similar...
         # TODO: apply global nuisance parameters to these
         # run parameters
         lumi_par = ROOT.RooRealVar(f"lumi_{idx}", "lumi", run_config["lumi"], 0.9 * run_config["lumi"], 1.1 * run_config["lumi"])
@@ -201,9 +213,10 @@ class FitHandler:
         p_pol_par = ROOT.RooRealVar(f"p_pol_{idx}", "p_pol", run_config["p_pol"], -1., 1.)
         p_pol_par.setConstant()
 
-        all_pars = [lumi_par, e_pol_par, p_pol_par] + self.coupling_pars + self.norm_factors
+        run_pars = [lumi_par, e_pol_par, p_pol_par]
 
-        self.expected_funs = []
+        all_pars = run_pars + self.coupling_pars + self.norm_factors
+
         bound_expected_funs = []
         for i, name in enumerate(self.obs_names):
             fun, func = self.make_expected_fun(name)
@@ -218,9 +231,11 @@ class FitHandler:
 
         # something will have to be imported into the workspace here but I might need to be careful
         # to not have multiple clones of the shared parameters...
-        self.ws.Import(model)
-        
-        return model
+        # self.ws.Import(model)
+
+        local_pars = obs_pars + run_pars + bound_expected_funs
+
+        return model, local_pars
 
 
     def get_obs_cov_matrix(self, run_config):
