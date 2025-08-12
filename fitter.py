@@ -1,6 +1,9 @@
 import ROOT
 from array import array
 from math import sqrt
+from itertools import combinations_with_replacement
+import numpy as np
+import scipy as sc
 
 
 class FitHandler:
@@ -56,11 +59,12 @@ class FitHandler:
                 for process_name in config["signal_processes"]:
                     p_dir = obs_dir[process_name]
                     pars = {}
-                    for par in config["parameters"].keys():
-                        par_hist = p_dir[par]
+                    # TODO: also read the mixed and quadratic terms
+                    for par_name in self.get_template_parameter_names(linear=False):
+                        par_hist = p_dir[par_name]
                         # very consistent ownership model of root requires us to do this...
                         par_hist.SetDirectory(ROOT.nullptr)
-                        pars[par] = par_hist
+                        pars[par_name] = par_hist
                     p_pars[process_name] = pars
                 self._template_parametrisations[obs] = p_pars
             for bkg in config["backgrounds"]:
@@ -118,10 +122,26 @@ class FitHandler:
         return projections
 
 
-    def get_template_params(self, obs_name: str):
+    def get_template_parameter_names(self, linear: bool):
+        # return the linear ones first
+        for par_name in self.parameters.keys():
+            yield par_name
+        if not linear:
+            for p1, p2 in combinations_with_replacement(self.parameters.keys(), r=2):
+                yield f"{p1}_{p2}"
+
+
+    def get_template_params(self, obs_name: str, linear=True):
         tmp_pars = self._template_parametrisations[obs_name]
         # need to convert dict of dicts to list of lists
-        return [list(p.values()) for p in tmp_pars.values()]
+        res = []
+        for p in tmp_pars.values():
+            inner_list = []
+            for par_name, par in p.items():
+                if par_name in self.get_template_parameter_names(linear):
+                    inner_list.append(par)
+            res.append(inner_list)
+        return res
 
 
     def build_model(self, total_lumi: float, hel_configs: list[dict[str, float]]):
@@ -309,4 +329,68 @@ class FitHandler:
             h = hn.Projection(i)
             h.SetDirectory(0)
             res.append(h)
+        return res
+
+    @staticmethod
+    def make_asimov_fast(h, seed: int):
+        rnd = ROOT.TRandomMT64(seed)
+        res = FitHandler.make_THn_like(h)
+        for i in range(h.GetNbins()):
+            val = h.GetBinContent(i, 0)
+            new_val = rnd.Poisson(val)
+            if new_val != 0:
+                res.SetBinContent(i, new_val)
+        res.Scale(h.Integral(True) / res.Integral(True))
+        return res
+
+
+    @staticmethod
+    def make_TH1_like(h):
+        axis = h.GetXaxis()
+        return ROOT.TH1D("", "", axis.GetNbins(), axis.GetXmin(), axis.GetXmax())
+
+
+    def make_toy_obs(self, lumi: float, hel_conf: dict[str, float], seed: int = 42,
+                     parameter_set: dict[str, float]|None = None,
+                     background: bool = False) -> tuple[float, float, float]:
+        # build signal histogram according to lumi and hel
+        sig_hist = FitHandler.make_observed_histogram_fast(self._signal_histograms_nd, self._signal_meta, lumi, hel_conf)
+        sig_hist_new = FitHandler.make_asimov_fast(sig_hist, seed)
+        # make signal 1d projections
+        sig_hists_1d = FitHandler.make_1D_projections(sig_hist_new)
+
+        if parameter_set:
+            # apply parametrisation to 1d signal hists
+            for i, sig_h in enumerate(sig_hists_1d):
+                rel_change = FitHandler.make_TH1_like(sig_h)
+                for bin in range(rel_change.GetNbinsX()):
+                    rel_change.SetBinContent(bin+1, 1.)
+                pars = list(self._template_parametrisations.values())[i]
+                for j, pol_par in enumerate(pars.values()):
+                    pol_weight = 0.25 * (1.0 + hel_conf["e_pol"] * FitHandler.process_e_pol[j]) * (1.0 + hel_conf["p_pol"] * FitHandler.process_p_pol[j])
+                    # don't need lumi weight as the parametrisation is relative to the signal hist
+                    # first the linear parts
+                    for par_name in parameter_set:
+                        rel_change += pol_weight * parameter_set[par_name] * pol_par[par_name]
+                    for p1, p2 in combinations_with_replacement(parameter_set, r=2):
+                        rel_change += pol_weight * parameter_set[p1] * parameter_set[p2] * pol_par[f"{p1}_{p2}"]
+                sig_h.Multiply(rel_change)
+
+        # if background
+            # create background hist from lumi and hel
+            # re-roll it using Poisson
+            # make 1d projections
+            # add them to signal 1d
+        # make observables from 1d histograms
+        obs = FitHandler.make_observables(sig_hists_1d)
+        return obs
+
+
+
+    def make_toy_obs_mult(self, lumi: float, hel_confs: list[dict[str, float]], seed: int = 42,
+                     parameter_set: dict[str, float]|None = None,
+                     background: bool = False) -> list[tuple[float, float, float]]:
+        res = []
+        for hel_conf in hel_confs:
+            res.append(self.make_toy_obs(lumi, hel_conf, seed, parameter_set, background))
         return res
