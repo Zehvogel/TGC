@@ -386,7 +386,6 @@ class FitHandler:
         return obs
 
 
-
     def make_toy_obs_mult(self, lumi: float, hel_confs: list[dict[str, float]], seed: int = 42,
                      parameter_set: dict[str, float]|None = None,
                      background: bool = False) -> list[tuple[float, float, float]]:
