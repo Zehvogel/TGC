@@ -157,6 +157,7 @@ class FitHandler:
 
         # lumi (and later pol)
         total_lumi_par = ROOT.RooRealVar("total_lumi", "total_lumi", total_lumi, 0.9 * total_lumi, 1.1*total_lumi)
+        total_lumi_par.setConstant()
 
         norm_factors = []
         # signal only so far
