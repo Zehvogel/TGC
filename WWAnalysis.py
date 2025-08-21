@@ -322,7 +322,6 @@ class WWAnalysis(Analysis):
         self._template_pars[observable_name] = template_pars
 
 
-
     def calculate_template_parametrisation_full(self, observable_name: str, alt_handler: AltSetupHandler):
         template_name = f"tmpl_{observable_name}"
         varied_histos = self._varied_histograms[template_name]

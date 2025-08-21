@@ -189,7 +189,6 @@ class Analysis:
         ROOT.RDF.RunGraphs(self._booked_objects)
 
 
-    # TODO: extend to allow to select categories
     # TODO: reconsider if this is needed
     def get_sum(self, name: str, int_lumi: float = 5000, e_pol: float = 0.0, p_pol: float = 0.0, categories: list[str]|None = None) -> float:
         # ideally I could also make a functor that does this, but there is this
